@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 public class CryptidOlogica
 {
     // Define mod id in a common place for everything to reference
-    public static final String MOD_ID = "cryptidologicaid";
+    public static final String MOD_ID = "cryptidologica";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
