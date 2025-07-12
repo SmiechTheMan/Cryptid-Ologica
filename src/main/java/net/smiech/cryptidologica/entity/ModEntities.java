@@ -8,7 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.smiech.cryptidologica.CryptidOlogica;
-import net.smiech.cryptidologica.entity.custom.BigfootCustom.BigfootEntity;
+import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 public class ModEntities {
     public  static  final DeferredRegister<EntityType<?>> ENTITY_TYPES =

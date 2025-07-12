@@ -3,7 +3,7 @@ package net.smiech.cryptidologica.entity.client.BigfootClient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.smiech.cryptidologica.CryptidOlogica;
-import net.smiech.cryptidologica.entity.custom.BigfootCustom.BigfootEntity;
+import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;

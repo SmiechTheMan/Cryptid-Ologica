@@ -5,7 +5,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.smiech.cryptidologica.CryptidOlogica;
 import net.smiech.cryptidologica.entity.ModEntities;
-import net.smiech.cryptidologica.entity.custom.BigfootCustom.BigfootEntity;
+import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 @Mod.EventBusSubscriber(modid = CryptidOlogica.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEventBusEvents {
