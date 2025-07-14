@@ -2,21 +2,18 @@ package net.smiech.cryptidologica.entity.goals;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderSet;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ISystemReportExtender;
-import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 import java.util.EnumSet;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 
 public class BigfootHideGoal extends Goal {
@@ -27,13 +24,11 @@ public class BigfootHideGoal extends Goal {
     protected boolean blockFound = false;
     protected BlockPos blockPos;
     protected Player target;
-    protected final Block blockToFind;
 
-    public BigfootHideGoal(PathfinderMob mob, int tickingSpeed, Block pBlock) {
+    public BigfootHideGoal(PathfinderMob mob, int tickingSpeed) {
         this.tickingSpeed = tickingSpeed;
         this.mob = mob;
-        this.blockToFind = pBlock;
-        this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
+//        this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
 
 
@@ -49,20 +44,23 @@ public class BigfootHideGoal extends Goal {
 
 
 
-    protected boolean findTreeRoot(PathfinderMob pMob,Block pBlocks){
+    protected boolean findTreeRoot(PathfinderMob pMob){
        BlockPos mobPosition = pMob.blockPosition();
        int blockVerticalSearch = 7;
-       int blockHorizontalSearch = 7;
+       int blockHorizontalSearch = 15;
        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+
+       //this devilous loop zigzags from + to -. Like goddamn, that's smart but it might be fucking up
 
         for(int $$1 = 0; $$1 <= blockVerticalSearch; $$1 = $$1 > 0 ? -$$1 : 1 - $$1) {
             for(int $$2 = 0; $$2 < blockHorizontalSearch; ++$$2) {
                 for(int $$3 = 0; $$3 <= $$2; $$3 = $$3 > 0 ? -$$3 : 1 - $$3) {
                     for(int $$4 = $$3 < $$2 && $$3 > -$$2 ? $$2 : 0; $$4 <= $$2; $$4 = $$4 > 0 ? -$$4 : 1 - $$4) {
                         mutableBlockPos.setWithOffset(mobPosition, $$3, $$1 - 1, $$4);
-                        if (this.mob.isWithinRestriction(mutableBlockPos) && this.isTree(this.mob.level(), mutableBlockPos, pBlocks)) {
+                        if (this.mob.isWithinRestriction(mutableBlockPos) && this.isTree(this.mob.level(), mutableBlockPos)) {
                             this.blockPos = mutableBlockPos;
                             return true;
+
                         }
                     }
                 }
@@ -71,14 +69,28 @@ public class BigfootHideGoal extends Goal {
         return false;
     }
 
-    private boolean isTree(Level pLevel, BlockPos pPos, Block pBlocks) {
-        LinkedList<BlockPos> scannedBlocks;
+    private boolean isTree(Level pLevel, BlockPos pPos) {
+
+        //Algorithm for checking if this block is actually a tree or a freestanding WoodBlock
+        //Loop to search in a 3x3 area that also checks if the 3 center blocks in the Y axis are of a certain type
+        //adds them into an array to see if it counts as a hideable object
+
+        LinkedList<BlockPos> blockPosLinkedList;
         if (!pLevel.isEmptyBlock(pPos.above())) {
             return false;
         } else {
             BlockState currentBlock = pLevel.getBlockState(pPos);
-            if (currentBlock.is(Blocks.DIAMOND_BLOCK)){
-                //Algorithim for checking if this block is actually a tree or a freestanding WoodBlock
+            if (currentBlock.is(BlockTags.BEACON_BASE_BLOCKS)){
+                sendChatMessage("Starting Loop");
+//                for (int y = 0; y < 3; y++){
+//                    for (int x = 0; x < 3; x++){
+//                        for (int z = 0; z < 3; z++){
+//                        currentMBlockPos =  new mutableBlockPos(pPos.getX()-1 + x,pPos.getY() + y,pPos.getZ()-1 + z);
+//
+//                                    sendChatMessage(pLevel.getBlockState(currentBlockPos) + " " + currentBlockPos.toShortString());
+//                        }
+//                    }
+//                }
                 return true;
             }
         }
@@ -86,74 +98,82 @@ public class BigfootHideGoal extends Goal {
     }
 
     protected void moveMobBehindTree(){
-    this.mob.getNavigation().moveTo(
-            (double)((float)this.blockPos.getX()) + 0.5,
-            (double)(this.blockPos.getY() + 1),
-            (double)((float)this.blockPos.getZ()) + 0.5, 1);
+        //Compare the blockpos.above etc to where the player is, and the one furthest away will roughly be the hiding block or look at any run away from player goal
+        //since those might show how to get the opposite direction run
+        this.mob.getNavigation().moveTo(
+            (double)((float)this.blockPos.getX()) -0.5,
+            (double)(this.blockPos.getY() - 0.5),
+            (double)((float)this.blockPos.getZ()) -0.5, 2);
     }
 
-    protected void projectPlayerCords( PathfinderMob pMob){
-        Player localTarget = returnTarget(pMob);
-        if (pMob.level().getNearestPlayer(pMob, 100f).distanceToSqr(pMob) < 50f){
-        localTarget.sendSystemMessage(Component.literal("CurrentPlayerCords: " + localTarget.blockPosition().getX() +"x " +localTarget.blockPosition().getZ()+ "z"));
-            localTarget.sendSystemMessage(Component.literal("CurrentFootCords: " + pMob.blockPosition().getX() +"x " +pMob.blockPosition().getZ()+ "z"));
-        }
+    protected void sendChatMessage(String msng){
+        Player localTarget = returnTarget(this.mob);
+            localTarget.sendSystemMessage(Component.literal(msng));
     }
 
-
-
-
-    public boolean canUse() {
-        if(this.mob.level().getNearestPlayer(this.mob, 100f) != null){
-        if(this.mob.level().getNearestPlayer(this.mob, 100f).distanceToSqr(this.mob) < 10f && !reachedTarget){
-            return this.findTreeRoot(this.mob, this.blockToFind);
-            }
-        }
-        return false;
-    }
-
-    public boolean canContinueToUse() {
-        return this.canUse();
-    }
-
-    public boolean isInterruptable() {
-        return true;
-    }
-
-    public void start() {
-    returnTarget(this.mob).sendSystemMessage(Component.literal("It has Started"));
-    this.moveMobBehindTree();
-    }
-
-    public void stop() {
-    }
-
-    public boolean requiresUpdateEveryTick() {
-        return false;
-    }
-
-    public void tick() {
-        if(this.blockPos.above().closerToCenterThan(this.mob.position(),1)){
-            setReachedTarget(true);
-        }else{
-            setReachedTarget(false);
-        }
-        if(tickingSpeed==20){projectPlayerCords(this.mob);}
-        decreaseTickingSpeed(1);
-        if(tickingSpeed<1){resetTick(20);}
-
-    }
 
     private Player returnTarget(PathfinderMob pMob) {
         this.target = pMob.level().getNearestPlayer(pMob, 100f);
         return this.target;
     }
 
-    private void resetTick(int change) {
-        tickingSpeed=change;
+
+    public boolean canUse() {
+        if(this.mob.level().getNearestPlayer(this.mob, 200f) != null){
+            if(this.mob.level().getNearestPlayer(this.mob, 200f).distanceToSqr(this.mob) < 30f && !isBlockFound()){
+            return this.findTreeRoot(this.mob);
+            }
+        }
+        return false;
     }
 
-    private void decreaseTickingSpeed(int minus) {
-        tickingSpeed = tickingSpeed-minus;
+//    @Override
+//    public boolean canContinueToUse() {
+//        if (!hasReachedTarget()) {
+//            return canUse();
+//        }
+//        return false;
+//    }
+
+    public boolean isInterruptable() {
+        return true;
     }
+
+    public void start() {
+    sendChatMessage("Starting to move");
+
+    this.moveMobBehindTree();
+    sendChatMessage("moved");
+    }
+
+    public void stop() {
+        sendChatMessage("From Stop beginning, block:" + isBlockFound());
+        sendChatMessage("stop method used");
+        sendChatMessage("From Stop end, block:" + isBlockFound());
+
+    }
+
+    public boolean requiresUpdateEveryTick() {
+        return false;
+    }
+    int ticker = tickingSpeed;
+    public void tick() {
+        if (this.mob.position().distanceToSqr(blockPos.getCenter())>1){
+            System.out.println("Yuh");
+            hasBlockFound(true);
+        }
+         ticker = ticker+1;
+         System.out.println(ticker);
+         if (ticker == 20){
+             sendChatMessage("distance player to mob " + returnTarget(this.mob).distanceToSqr(this.mob));
+             sendChatMessage("distance player to mob " + returnTarget(this.mob).distanceToSqr(blockPos.getX(),blockPos.getY(),blockPos.getZ()));
+             ticker = tickingSpeed;
+         }
+    }
+
+        //change setReachedTarget so that it doesn't reset if it gets to the block, because it will keep repeating itself midwalk, so make it so it changes to
+        //false after it has pathfound a bit away from the found block or if the player is further away, probably a combo of both
+
 }
+
+//notes: stops after 1 go, but should find a way to make it run around
