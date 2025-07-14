@@ -38,7 +38,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes(){
         return PathfinderMob.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 50D)
+                .add(Attributes.MAX_HEALTH, 2D)
                 .add(Attributes.MOVEMENT_SPEED, 0.22)
                 .add(Attributes.ARMOR_TOUGHNESS, 0.1f)
                 .add(Attributes.ATTACK_DAMAGE, 2f)
