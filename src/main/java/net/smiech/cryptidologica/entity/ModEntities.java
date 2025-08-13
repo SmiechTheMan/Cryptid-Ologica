@@ -17,7 +17,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<BigfootEntity>> BIGFOOT =
             ENTITY_TYPES.register("bigfoot", ()-> EntityType.Builder.of(BigfootEntity::new, MobCategory.CREATURE)
-                    .sized(1f, 3F).build(ResourceLocation.fromNamespaceAndPath(CryptidOlogica.MOD_ID,"bigfoot").toString()));
+                    .sized(0.6F, 2.9F).build(ResourceLocation.fromNamespaceAndPath(CryptidOlogica.MOD_ID,"bigfoot").toString()));
 
     public static void register(IEventBus eventBus){
         ENTITY_TYPES.register(eventBus);
