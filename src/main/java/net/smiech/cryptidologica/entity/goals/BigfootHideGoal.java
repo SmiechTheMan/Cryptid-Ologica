@@ -21,9 +21,11 @@ public class BigfootHideGoal extends Goal {
     protected final PathfinderMob mob;
     protected boolean reachedTarget = false;
     protected boolean blockFound = false;
+    protected boolean playerTooClose = false;
     protected BlockPos blockPos;
     protected Player target;
     protected Vec3 vectorToHide;
+
 
     public BigfootHideGoal(PathfinderMob mob, int tickingSpeed) {
         this.tickingSpeed = tickingSpeed;
@@ -39,6 +41,10 @@ public class BigfootHideGoal extends Goal {
     public boolean isBlockFound(){return  blockFound;}
 
     public void hasBlockFound(boolean setFound){this.blockFound = setFound;}
+
+    public boolean isPlayerTooClose(){return this.playerTooClose;}
+
+    public void hasPlayerTooClose(boolean setClose){this.playerTooClose = setClose; }
 
 
 //Repeate moving to goal until reached target is true, do this in can use, with found block and hasn't reached target it will run the move behind
@@ -73,8 +79,8 @@ public class BigfootHideGoal extends Goal {
     private boolean isTree(Level pLevel, BlockPos pPos) {
 //
             BlockState currentBlock = pLevel.getBlockState(pPos);
-            if (currentBlock.is(BlockTags.LOGS)){
-                // && (returnTarget(this.mob).distanceToSqr(pPos.getCenter()) > 16f)
+            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 100f)){
+                // && (returnPlayer().distanceToSqr(pPos.getCenter()) > 16f)
                 //The distance requirement just makes it not work, instead of moving to a different block :(
                 BlockPos.MutableBlockPos rootBlockPos = new BlockPos.MutableBlockPos();
                 rootBlockPos.set(pPos);
@@ -107,7 +113,7 @@ public class BigfootHideGoal extends Goal {
                             }
                         }
                         Vec3 blockCenter = rootBlockPos.above().getCenter();
-                        Vec3 directionBetween = returnTarget(this.mob).position().subtract(blockCenter).normalize();
+                        Vec3 directionBetween = returnPlayer().position().subtract(blockCenter).normalize();
                         this.vectorToHide= blockCenter.subtract(directionBetween.scale(1.2));
 
                         this.blockPos = rootBlockPos.above();
@@ -132,13 +138,13 @@ public class BigfootHideGoal extends Goal {
         // if nothing is found after a bit will open an interdimensional portal and leave
     }
 
-    private Player returnTarget(PathfinderMob pMob) {
-        this.target = pMob.level().getNearestPlayer(pMob, 100f);
+    private Player returnPlayer() {
+        this.target = this.mob.level().getNearestPlayer(this.mob, 121f);
         return this.target;
     }
 
     protected void sendChatMessage(String msng){
-        Player localTarget = returnTarget(this.mob);
+        Player localTarget = returnPlayer();
         localTarget.sendSystemMessage(Component.literal(msng));
     }
 
@@ -155,26 +161,34 @@ public class BigfootHideGoal extends Goal {
     //the distance in canuse is also connected to Stop, so it doesn't stop until I'm out of the range
 
     public boolean canUse() {
-        if(this.mob.level().getNearestPlayer(this.mob, 100f) != null){
-            if(this.mob.level().getNearestPlayer(this.mob, 100f).distanceToSqr(this.mob) < 50f && !isBlockFound() ){
+        if(returnPlayer() != null){
+            if(returnPlayer().distanceToSqr(this.mob) < 100f && !isBlockFound() ){
                 return this.findTreeRoot(this.mob);
-            }else if(this.mob.level().getNearestPlayer(this.mob, 100f).distanceToSqr(this.mob) < 50f && isBlockFound() && !isReachedTarget()){
-                if(tickingSpeed%10==0){
-                    sendChatMessage("CanUse IsblockFound");
+//            }else if(this.mob.level().getNearestPlayer(this.mob, 121f).distanceToSqr(this.mob) < 100f && isBlockFound() && !isReachedTarget()){
+//                if(tickingSpeed%10==0){
 //                    moveMobBehindTree();
-                }
+//                    sendChatMessage("CanUse IsblockFound");
+//
+//                }
+//                return isBlockFound();
+                //without the return statement outside the ticking if, it keeps running for a second and then reseting, going start stop start stop?
+                // OH YEAH it returns a false and that's why it keeps redoing the first !isBlockfound if. Since that condition is no longer active it will repeat it
+                //might keep it that way if I don't find a cleaner way to make it work
+
             }
         }
 
         return false;
     }
 
-//    public boolean canContinueToUse() {
-//        if (isBlockFound() && !hasReachedTarget()){
-//            this.moveMobBehindTree();
-//        }
-//        return canUse();
-//    }
+    public boolean canContinueToUse() {
+        if (!isReachedTarget() && (returnPlayer() != null)){
+            return true;
+        }
+        sendChatMessage("Can't !ContinuetoUse");
+        return false;
+
+    }
 
     public boolean isInterruptable() {
 //        System.out.println("IsInterruptable");
@@ -182,7 +196,7 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void start() {
-    sendChatMessage("Start");
+        sendChatMessage("Start");
         this.moveMobBehindTree();
 
 
@@ -195,8 +209,7 @@ public class BigfootHideGoal extends Goal {
     }
 
     public boolean requiresUpdateEveryTick() {
-//        System.out.println("updateEveryTick");
-        return false;
+        return true;
     }
 
     public void tick() {
@@ -205,21 +218,12 @@ public class BigfootHideGoal extends Goal {
         if(tickingSpeed<1){resetTick(20);}
 
 
-        if (returnTarget(this.mob).distanceToSqr(this.blockPos.getCenter()) < 10f){
-            hasBlockFound(false);
-            sendChatMessage("Setting block found to false if target close");
-        }
+
         if(!reachedTarget && tickingSpeed==20){
           this.moveMobBehindTree();
         }
-
-        if (this.mob.level().getBlockState(this.blockPos).isAir()){
-            hasBlockFound(false);
-            sendChatMessage("Setting block found to false if air");
-        }
-        if(this.blockPos.above().closerToCenterThan(this.mob.position(),1)){
+        if(this.blockPos.closerToCenterThan(this.mob.position(),1.1)){
             System.out.println("Is above block");
-            hasReachedTarget(true);
         }
         if(tickingSpeed%10==0){
         System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget());
