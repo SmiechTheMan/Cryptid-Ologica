@@ -182,18 +182,19 @@ public class BigfootHideGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
-        if (!isReachedTarget() && (returnPlayer() != null)){
+        if (!isReachedTarget() && (returnPlayer().distanceToSqr(this.mob) < 100f)){
+            sendChatMessage("ContinuetoUse");
             return true;
         }
         sendChatMessage("Can't !ContinuetoUse");
-        return false;
+        return canUse();
 
     }
 
-    public boolean isInterruptable() {
-//        System.out.println("IsInterruptable");
-        return true;
-    }
+//    public boolean isInterruptable() {
+////        System.out.println("IsInterruptable");
+//        return true;
+//    }
 
     public void start() {
         sendChatMessage("Start");
