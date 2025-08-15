@@ -7,7 +7,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.smiech.cryptidologica.entity.goals.BigfootHideGoal;
+import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigFootLookAtPlayerGoal;
+import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootHideGoal;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -29,7 +30,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity {
         this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this,1.1D));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 10f,1f));
+        this.goalSelector.addGoal(2, new BigFootLookAtPlayerGoal(this, Player.class, 25f,1f));
         this.goalSelector.addGoal(0, new BigfootHideGoal(this,20));
 
     }
@@ -63,3 +64,5 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity {
         return cache;
     }
 }
+
+

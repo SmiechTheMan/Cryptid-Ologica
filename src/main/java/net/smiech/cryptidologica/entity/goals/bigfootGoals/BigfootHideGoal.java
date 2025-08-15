@@ -1,10 +1,10 @@
-package net.smiech.cryptidologica.entity.goals;
+package net.smiech.cryptidologica.entity.goals.bigfootGoals;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +21,6 @@ public class BigfootHideGoal extends Goal {
     protected final PathfinderMob mob;
     protected boolean reachedTarget = false;
     protected boolean blockFound = false;
-    protected boolean playerTooClose = false;
     protected BlockPos blockPos;
     protected Player target;
     protected Vec3 vectorToHide;
@@ -42,9 +41,6 @@ public class BigfootHideGoal extends Goal {
 
     public void hasBlockFound(boolean setFound){this.blockFound = setFound;}
 
-    public boolean isPlayerTooClose(){return this.playerTooClose;}
-
-    public void hasPlayerTooClose(boolean setClose){this.playerTooClose = setClose; }
 
 
 //Repeate moving to goal until reached target is true, do this in can use, with found block and hasn't reached target it will run the move behind
@@ -79,7 +75,7 @@ public class BigfootHideGoal extends Goal {
     private boolean isTree(Level pLevel, BlockPos pPos) {
 //
             BlockState currentBlock = pLevel.getBlockState(pPos);
-            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 100f)){
+            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 17*17)){
                 // && (returnPlayer().distanceToSqr(pPos.getCenter()) > 16f)
                 //The distance requirement just makes it not work, instead of moving to a different block :(
                 BlockPos.MutableBlockPos rootBlockPos = new BlockPos.MutableBlockPos();
@@ -112,9 +108,7 @@ public class BigfootHideGoal extends Goal {
                                 }
                             }
                         }
-                        Vec3 blockCenter = rootBlockPos.above().getCenter();
-                        Vec3 directionBetween = returnPlayer().position().subtract(blockCenter).normalize();
-                        this.vectorToHide= blockCenter.subtract(directionBetween.scale(1.2));
+
 
                         this.blockPos = rootBlockPos.above();
                         return true;
@@ -126,9 +120,11 @@ public class BigfootHideGoal extends Goal {
     }
 
     protected void moveMobBehindTree(){
+        Vec3 blockCenter = this.blockPos.above().getCenter();
+        Vec3 directionBetween = returnPlayer().position().subtract(blockCenter).normalize();
+        this.vectorToHide= blockCenter.subtract(directionBetween.scale(1.2));
+        System.out.println(blockPos + " vector ; " + vectorToHide);
         System.out.println("MoveBehindTree start");
-//        System.out.println("BLOCKPOS :" + this.blockPos);
-//            System.out.println("HIDECORDS :" +vectorToHide);
         this.mob.getNavigation().moveTo(
                 vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.35);
 
@@ -138,29 +134,37 @@ public class BigfootHideGoal extends Goal {
         // if nothing is found after a bit will open an interdimensional portal and leave
     }
 
-    protected boolean detectPlayerInRange(){
-        if (returnPlayer().distanceToSqr(this.mob) < 121f){
-            BlockPos leafCheckPlayerPos = returnPlayer().blockPosition();
-            for (int i = 0 ; i < 3 ;i++){
-                for (int j = 0 ; j < 3 ;j++){
-                    for (int k = 0 ; k < 3 ;k++){
-                        BlockPos.MutableBlockPos leafCheckerBlockPos = new BlockPos.MutableBlockPos(leafCheckPlayerPos.getX()-1 + j,
-                                leafCheckPlayerPos.above().getY()+ i,
-                                leafCheckPlayerPos.getZ()-1 + k);
-                        if(k !=1 && j!= 1
-                                && (returnPlayer().level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))){
-                            return false;
+    protected boolean isPlayerInleaves(Player pPlayer) {
+        if (pPlayer !=null) {
+            BlockPos leafCheckPlayerPos = pPlayer.blockPosition();
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    for (int k = 0; k < 3; k++) {
+                        BlockPos.MutableBlockPos leafCheckerBlockPos = new BlockPos.MutableBlockPos(leafCheckPlayerPos.getX() - 1 + j,
+                                leafCheckPlayerPos.above().getY() + i,
+                                leafCheckPlayerPos.getZ() - 1 + k);
+                        if (k != 1 && j != 1
+                                && (pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))
+                                && pPlayer.isCrouching()
+                                && (pPlayer.isCreative())) {
+                            return true;
                         }
                     }
                 }
             }
-            return true;
+        }
+        return false;
+    }
+
+    protected boolean detectPlayerInRange(){
+        if (returnPlayer().distanceToSqr(this.mob) < 17*17){
+           return !isPlayerInleaves(returnPlayer());
         }
         return false;
     }
 
     private Player returnPlayer() {
-        this.target = this.mob.level().getNearestPlayer(this.mob, 15*15);
+        this.target = this.mob.level().getNearestPlayer(this.mob, 400);
         return this.target;
     }
 
@@ -228,11 +232,11 @@ public class BigfootHideGoal extends Goal {
 
 
 
-        if(!reachedTarget && (tickingSpeed%5==0) && blockFound){
+        if(!reachedTarget && (tickingSpeed%4==0) && blockFound){
           this.moveMobBehindTree();
           sendChatMessage("Tick Movebhindtree");
         }
-        if(!reachedTarget && (tickingSpeed%10==0) && detectPlayerInRange()){
+        if(!reachedTarget && (tickingSpeed%5==0) && detectPlayerInRange()){
             hasBlockFound(false);
             this.findTreeRoot(this.mob);
             sendChatMessage("Too close!!");
@@ -245,6 +249,4 @@ public class BigfootHideGoal extends Goal {
         System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget());
         }
     }
-
-
 }
