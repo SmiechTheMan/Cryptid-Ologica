@@ -127,10 +127,10 @@ public class BigfootHideGoal extends Goal {
 
     protected void moveMobBehindTree(){
         System.out.println("MoveBehindTree start");
-        System.out.println("BLOCKPOS :" + this.blockPos);
-            System.out.println("HIDECORDS :" +vectorToHide);
+//        System.out.println("BLOCKPOS :" + this.blockPos);
+//            System.out.println("HIDECORDS :" +vectorToHide);
         this.mob.getNavigation().moveTo(
-                vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.25);
+                vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.35);
 
     }
     protected void runToRandomSpot(){
@@ -138,8 +138,30 @@ public class BigfootHideGoal extends Goal {
         // if nothing is found after a bit will open an interdimensional portal and leave
     }
 
+    protected boolean detectPlayerInRange(){
+        if (returnPlayer().distanceToSqr(this.mob) < 121f){
+            BlockPos leafCheckPlayerPos = returnPlayer().blockPosition();
+            for (int i = 0 ; i < 3 ;i++){
+                for (int j = 0 ; j < 3 ;j++){
+                    for (int k = 0 ; k < 3 ;k++){
+                        BlockPos.MutableBlockPos leafCheckerBlockPos = new BlockPos.MutableBlockPos(leafCheckPlayerPos.getX()-1 + j,
+                                leafCheckPlayerPos.above().getY()+ i,
+                                leafCheckPlayerPos.getZ()-1 + k);
+                        if(k !=1 && j != 1
+                                && !(returnPlayer().level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))){
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     private Player returnPlayer() {
-        this.target = this.mob.level().getNearestPlayer(this.mob, 121f);
+        this.target = this.mob.level().getNearestPlayer(this.mob, 15*15);
         return this.target;
     }
 
@@ -162,18 +184,8 @@ public class BigfootHideGoal extends Goal {
 
     public boolean canUse() {
         if(returnPlayer() != null){
-            if(returnPlayer().distanceToSqr(this.mob) < 100f && !isBlockFound() ){
+            if(returnPlayer().distanceToSqr(this.mob) < 121f && !isBlockFound() ){
                 return this.findTreeRoot(this.mob);
-//            }else if(this.mob.level().getNearestPlayer(this.mob, 121f).distanceToSqr(this.mob) < 100f && isBlockFound() && !isReachedTarget()){
-//                if(tickingSpeed%10==0){
-//                    moveMobBehindTree();
-//                    sendChatMessage("CanUse IsblockFound");
-//
-//                }
-//                return isBlockFound();
-                //without the return statement outside the ticking if, it keeps running for a second and then reseting, going start stop start stop?
-                // OH YEAH it returns a false and that's why it keeps redoing the first !isBlockfound if. Since that condition is no longer active it will repeat it
-                //might keep it that way if I don't find a cleaner way to make it work
 
             }
         }
@@ -182,13 +194,13 @@ public class BigfootHideGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
-        if (!isReachedTarget() && (returnPlayer().distanceToSqr(this.mob) < 100f)){
-            sendChatMessage("ContinuetoUse");
+        if (!isReachedTarget() && (returnPlayer().distanceToSqr(this.mob) < 121f)){
+//            sendChatMessage("ContinuetoUse");
             return true;
         }
-        sendChatMessage("Can't !ContinuetoUse");
-        return canUse();
-
+//        sendChatMessage("Can't !ContinuetoUse");
+        return false;
+//Currently stops, But Doesn't relaunch unless the player exits the minimum range after it does a different goal?
     }
 
 //    public boolean isInterruptable() {
@@ -220,10 +232,17 @@ public class BigfootHideGoal extends Goal {
 
 
 
-        if(!reachedTarget && tickingSpeed==20){
+        if(!reachedTarget && (tickingSpeed%5==0) && blockFound){
           this.moveMobBehindTree();
+          sendChatMessage("Tick Movebhindtree");
         }
-        if(this.blockPos.closerToCenterThan(this.mob.position(),1.1)){
+        if(!reachedTarget && (tickingSpeed%10==0) && returnPlayer().distanceToSqr(this.mob)<100f){
+            hasBlockFound(false);
+            this.findTreeRoot(this.mob);
+            sendChatMessage("Too close!!");
+        }
+
+        if(this.mob.blockPosition().closerToCenterThan(vectorToHide,1.1)){
             System.out.println("Is above block");
         }
         if(tickingSpeed%10==0){
