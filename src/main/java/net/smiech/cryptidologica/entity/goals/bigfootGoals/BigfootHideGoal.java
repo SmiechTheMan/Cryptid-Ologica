@@ -209,14 +209,14 @@ public class BigfootHideGoal extends Goal {
 //    }
 
     public void start() {
-        sendChatMessage("Start");
+//        sendChatMessage("Start");
         this.moveMobBehindTree();
 
 
     }
 
     public void stop() {
-        sendChatMessage("stop");
+//        sendChatMessage("stop");
        hasReachedTarget(false);
        hasBlockFound(false);
     }
@@ -234,16 +234,16 @@ public class BigfootHideGoal extends Goal {
 
         if(!reachedTarget && (tickingSpeed%4==0) && blockFound){
           this.moveMobBehindTree();
-          sendChatMessage("Tick Movebhindtree");
+//          sendChatMessage("Tick Movebhindtree");
         }
         if(!reachedTarget && (tickingSpeed%5==0) && detectPlayerInRange()){
             hasBlockFound(false);
             this.findTreeRoot(this.mob);
-            sendChatMessage("Too close!!");
+//            sendChatMessage("Too close!!");
         }
 
-        if(this.mob.blockPosition().closerToCenterThan(vectorToHide,1.1)){
-            System.out.println("Is above block");
+        if(this.mob.blockPosition().closerToCenterThan(vectorToHide,1)){
+//            System.out.println("Is above block");
         }
         if(tickingSpeed%10==0){
         System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget());
