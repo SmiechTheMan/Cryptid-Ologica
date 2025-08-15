@@ -147,8 +147,8 @@ public class BigfootHideGoal extends Goal {
                         BlockPos.MutableBlockPos leafCheckerBlockPos = new BlockPos.MutableBlockPos(leafCheckPlayerPos.getX()-1 + j,
                                 leafCheckPlayerPos.above().getY()+ i,
                                 leafCheckPlayerPos.getZ()-1 + k);
-                        if(k !=1 && j != 1
-                                && !(returnPlayer().level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))){
+                        if(k !=1 && j!= 1
+                                && (returnPlayer().level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))){
                             return false;
                         }
                     }
@@ -156,7 +156,6 @@ public class BigfootHideGoal extends Goal {
             }
             return true;
         }
-
         return false;
     }
 
@@ -184,7 +183,7 @@ public class BigfootHideGoal extends Goal {
 
     public boolean canUse() {
         if(returnPlayer() != null){
-            if(returnPlayer().distanceToSqr(this.mob) < 121f && !isBlockFound() ){
+            if(detectPlayerInRange() && !isBlockFound() ){
                 return this.findTreeRoot(this.mob);
 
             }
@@ -194,12 +193,9 @@ public class BigfootHideGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
-        if (!isReachedTarget() && (returnPlayer().distanceToSqr(this.mob) < 121f)){
-//            sendChatMessage("ContinuetoUse");
-            return true;
-        }
+        //            sendChatMessage("ContinuetoUse");
+        return !isReachedTarget() && detectPlayerInRange();
 //        sendChatMessage("Can't !ContinuetoUse");
-        return false;
 //Currently stops, But Doesn't relaunch unless the player exits the minimum range after it does a different goal?
     }
 
@@ -236,7 +232,7 @@ public class BigfootHideGoal extends Goal {
           this.moveMobBehindTree();
           sendChatMessage("Tick Movebhindtree");
         }
-        if(!reachedTarget && (tickingSpeed%10==0) && returnPlayer().distanceToSqr(this.mob)<100f){
+        if(!reachedTarget && (tickingSpeed%10==0) && detectPlayerInRange()){
             hasBlockFound(false);
             this.findTreeRoot(this.mob);
             sendChatMessage("Too close!!");
