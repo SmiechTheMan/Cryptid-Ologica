@@ -26,7 +26,6 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-
         this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this,1.1D));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));

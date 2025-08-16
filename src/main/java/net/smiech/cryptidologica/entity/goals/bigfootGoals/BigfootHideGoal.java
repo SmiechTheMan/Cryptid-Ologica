@@ -4,10 +4,11 @@ package net.smiech.cryptidologica.entity.goals.bigfootGoals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.CollisionGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -24,7 +25,7 @@ public class BigfootHideGoal extends Goal {
     protected BlockPos blockPos;
     protected Player target;
     protected Vec3 vectorToHide;
-
+    protected static int timeToRun = 0;
 
     public BigfootHideGoal(PathfinderMob mob, int tickingSpeed) {
         this.tickingSpeed = tickingSpeed;
@@ -63,12 +64,14 @@ public class BigfootHideGoal extends Goal {
                         {
                             System.out.println("FindTreeRoot blockpos setter ");
                             hasBlockFound(true);
+                            timeToRun = 0;
                             return true;
                         }
                     }
                 }
             }
         }
+        ++timeToRun;
         return false;
     }
 
@@ -76,8 +79,6 @@ public class BigfootHideGoal extends Goal {
 //
             BlockState currentBlock = pLevel.getBlockState(pPos);
             if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 17*17)){
-                // && (returnPlayer().distanceToSqr(pPos.getCenter()) > 16f)
-                //The distance requirement just makes it not work, instead of moving to a different block :(
                 BlockPos.MutableBlockPos rootBlockPos = new BlockPos.MutableBlockPos();
                 rootBlockPos.set(pPos);
                 int distanceForSearch = 5;
@@ -130,6 +131,13 @@ public class BigfootHideGoal extends Goal {
 
     }
     protected void runToRandomSpot(){
+        Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 15, 7);
+        if(randomSpot != null && (this.timeToRun>=100 && this.timeToRun <200) && returnPlayer().distanceToSqr(randomSpot)>25) {
+            this.mob.getNavigation().moveTo(randomSpot.x,randomSpot.y, randomSpot.z, 1.5);
+        }else if(this.timeToRun >= 200){
+        this.mob.discard();
+        this.timeToRun = 0;
+        }
         //this will activate when there's no trees, bigfoot will run around trying to find something and then
         // if nothing is found after a bit will open an interdimensional portal and leave
     }
@@ -146,7 +154,8 @@ public class BigfootHideGoal extends Goal {
                         if (k != 1 && j != 1
                                 && (pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))
                                 && pPlayer.isCrouching()
-                                && (pPlayer.isCreative())) {
+//                                && (pPlayer.isCreative())
+                        ) {
                             return true;
                         }
                     }
@@ -187,12 +196,14 @@ public class BigfootHideGoal extends Goal {
 
     public boolean canUse() {
         if(returnPlayer() != null){
+            sendChatMessage("timer " + timeToRun);
             if(detectPlayerInRange() && !isBlockFound() ){
                 return this.findTreeRoot(this.mob);
 
             }
-        }
 
+        }
+        timeToRun = 0;
         return false;
     }
 
@@ -216,6 +227,7 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void stop() {
+            timeToRun = 0;
 //        sendChatMessage("stop");
        hasReachedTarget(false);
        hasBlockFound(false);
@@ -242,11 +254,14 @@ public class BigfootHideGoal extends Goal {
 //            sendChatMessage("Too close!!");
         }
 
+        //not sure if this is still needed but will keep it for now
         if(this.mob.blockPosition().closerToCenterThan(vectorToHide,1)){
-//            System.out.println("Is above block");
+           sendChatMessage("Over block");
+            hasBlockFound(false);
+           hasReachedTarget(false);
         }
-        if(tickingSpeed%10==0){
-        System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget());
-        }
+//        if(tickingSpeed%10==0 && !isBlockFound() && !isReachedTarget() ){
+//        System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget());
+//        }
     }
 }
