@@ -71,10 +71,10 @@ public class BigfootHideGoal extends Goal {
                 }
             }
         }
-        ++timeToRun;
+
         return false;
     }
-
+            //  wonder if that's due to me being close to them or no
     private boolean isTree(Level pLevel, BlockPos pPos) {
 //
             BlockState currentBlock = pLevel.getBlockState(pPos);
@@ -132,35 +132,53 @@ public class BigfootHideGoal extends Goal {
     }
     protected void runToRandomSpot(){
         Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 15, 7);
-        if(randomSpot != null && (this.timeToRun>=100 && this.timeToRun <200) && returnPlayer().distanceToSqr(randomSpot)>25) {
+        if(randomSpot != null && (timeToRun>=100 && timeToRun <200) && returnPlayer().distanceToSqr(randomSpot)>25) {
             this.mob.getNavigation().moveTo(randomSpot.x,randomSpot.y, randomSpot.z, 1.5);
-        }else if(this.timeToRun >= 200){
+        }else if(timeToRun >= 200){
         this.mob.discard();
-        this.timeToRun = 0;
+        timeToRun = 0;
         }
         //this will activate when there's no trees, bigfoot will run around trying to find something and then
         // if nothing is found after a bit will open an interdimensional portal and leave
     }
 
+    //When the player walks out of the leaves, it's stuck in a loop until the goal ends
+
     protected boolean isPlayerInleaves(Player pPlayer) {
         if (pPlayer !=null) {
             BlockPos leafCheckPlayerPos = pPlayer.blockPosition();
+            boolean isOneBlockAir = false;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     for (int k = 0; k < 3; k++) {
                         BlockPos.MutableBlockPos leafCheckerBlockPos = new BlockPos.MutableBlockPos(leafCheckPlayerPos.getX() - 1 + j,
-                                leafCheckPlayerPos.above().getY() + i,
+                                leafCheckPlayerPos.above().getY()-1 + i,
                                 leafCheckPlayerPos.getZ() - 1 + k);
+//                        if (k != 1 && j != 1 && pPlayer.isCrouching()) {
+//                            if (pPlayer.level().getBlockState(leafCheckerBlockPos).isAir() && !isOneBlockAir){
+//                                    isOneBlockAir = true;
+//                            }else if ((pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))){
+//                                sendChatMessage("true " + isOneBlockAir );
+//                                return true;
+//                            }else {
+//                                sendChatMessage("false " + isOneBlockAir);
+//                                return false;
+//                            }
+                        //Uh this works if it's a 3x3 1 tall, with like 2 additional blocks on the 2nd layer, seems it stops on a singular block
+                        // nvm that happens when I'm crouching???
+                        System.out.println(leafCheckerBlockPos.toShortString() + " = " + pPlayer.level().getBlockState(leafCheckerBlockPos) +  " = Player Coords " + pPlayer.blockPosition());
                         if (k != 1 && j != 1
-                                && (pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))
-                                && pPlayer.isCrouching()
-//                                && (pPlayer.isCreative())
+                                && !((pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))
+                              && pPlayer.isCrouching())
+//                               && (pPlayer.isCreative())
                         ) {
-                            return true;
+                            System.out.println("When does this trigger");
+                            return false;
                         }
                     }
                 }
-            }
+            }System.out.println("Hopefully this is after 9 blocks");
+            return true;
         }
         return false;
     }
@@ -196,8 +214,10 @@ public class BigfootHideGoal extends Goal {
 
     public boolean canUse() {
         if(returnPlayer() != null){
-            sendChatMessage("timer " + timeToRun);
             if(detectPlayerInRange() && !isBlockFound() ){
+                System.out.println("Canuse");
+                System.out.println(isBlockFound());
+                System.out.println(findTreeRoot(this.mob));
                 return this.findTreeRoot(this.mob);
 
             }
@@ -208,7 +228,7 @@ public class BigfootHideGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
-        //            sendChatMessage("ContinuetoUse");
+                    sendChatMessage("ContinuetoUse");
         return !isReachedTarget() && detectPlayerInRange();
 //        sendChatMessage("Can't !ContinuetoUse");
 //Currently stops, But Doesn't relaunch unless the player exits the minimum range after it does a different goal?
@@ -228,7 +248,7 @@ public class BigfootHideGoal extends Goal {
 
     public void stop() {
             timeToRun = 0;
-//        sendChatMessage("stop");
+        sendChatMessage("stop");
        hasReachedTarget(false);
        hasBlockFound(false);
     }
@@ -238,10 +258,10 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void tick() {
-
+        if(!isBlockFound()){++timeToRun;}
+        System.out.println("Am I on?");
         decreaseTickingSpeed(1);
         if(tickingSpeed<1){resetTick(20);}
-
 
 
         if(!reachedTarget && (tickingSpeed%4==0) && blockFound){
@@ -251,7 +271,7 @@ public class BigfootHideGoal extends Goal {
         if(!reachedTarget && (tickingSpeed%5==0) && detectPlayerInRange()){
             hasBlockFound(false);
             this.findTreeRoot(this.mob);
-//            sendChatMessage("Too close!!");
+            sendChatMessage("Too close!!");
         }
 
         //not sure if this is still needed but will keep it for now
@@ -260,8 +280,8 @@ public class BigfootHideGoal extends Goal {
             hasBlockFound(false);
            hasReachedTarget(false);
         }
-//        if(tickingSpeed%10==0 && !isBlockFound() && !isReachedTarget() ){
-//        System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget());
-//        }
+        if(tickingSpeed%10==0 && !isBlockFound() && !isReachedTarget() ){
+        System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget() + " timetorun " + timeToRun);
+        }
     }
 }
