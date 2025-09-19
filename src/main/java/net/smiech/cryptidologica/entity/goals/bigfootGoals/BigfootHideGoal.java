@@ -75,10 +75,11 @@ public class BigfootHideGoal extends Goal {
         return false;
     }
             //  wonder if that's due to me being close to them or no
+    //it probably is just me appearing too close to it and other trees
     private boolean isTree(Level pLevel, BlockPos pPos) {
 //
             BlockState currentBlock = pLevel.getBlockState(pPos);
-            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 17*17)){
+            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 16*16)){
                 BlockPos.MutableBlockPos rootBlockPos = new BlockPos.MutableBlockPos();
                 rootBlockPos.set(pPos);
                 int distanceForSearch = 5;
@@ -110,13 +111,12 @@ public class BigfootHideGoal extends Goal {
                             }
                         }
 
-
+                        System.out.println("IsTree true");
                         this.blockPos = rootBlockPos.above();
                         return true;
                     }
                 }
             }
-
         return false;
     }
 
@@ -154,18 +154,6 @@ public class BigfootHideGoal extends Goal {
                         BlockPos.MutableBlockPos leafCheckerBlockPos = new BlockPos.MutableBlockPos(leafCheckPlayerPos.getX() - 1 + j,
                                 leafCheckPlayerPos.above().getY()-1 + i,
                                 leafCheckPlayerPos.getZ() - 1 + k);
-//                        if (k != 1 && j != 1 && pPlayer.isCrouching()) {
-//                            if (pPlayer.level().getBlockState(leafCheckerBlockPos).isAir() && !isOneBlockAir){
-//                                    isOneBlockAir = true;
-//                            }else if ((pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))){
-//                                sendChatMessage("true " + isOneBlockAir );
-//                                return true;
-//                            }else {
-//                                sendChatMessage("false " + isOneBlockAir);
-//                                return false;
-//                            }
-                        //Uh this works if it's a 3x3 1 tall, with like 2 additional blocks on the 2nd layer, seems it stops on a singular block
-                        // nvm that happens when I'm crouching???
                         System.out.println(leafCheckerBlockPos.toShortString() + " = " + pPlayer.level().getBlockState(leafCheckerBlockPos) +  " = Player Coords " + pPlayer.blockPosition());
                         if (k != 1 && j != 1
                                 && !((pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))
@@ -184,7 +172,7 @@ public class BigfootHideGoal extends Goal {
     }
 
     protected boolean detectPlayerInRange(){
-        if (returnPlayer().distanceToSqr(this.mob) < 17*17){
+        if (returnPlayer().distanceToSqr(this.mob) < 18*18){
            return !isPlayerInleaves(returnPlayer());
         }
         return false;
@@ -215,11 +203,7 @@ public class BigfootHideGoal extends Goal {
     public boolean canUse() {
         if(returnPlayer() != null){
             if(detectPlayerInRange() && !isBlockFound() ){
-                System.out.println("Canuse");
-                System.out.println(isBlockFound());
-                System.out.println(findTreeRoot(this.mob));
                 return this.findTreeRoot(this.mob);
-
             }
 
         }
@@ -228,7 +212,6 @@ public class BigfootHideGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
-                    sendChatMessage("ContinuetoUse");
         return !isReachedTarget() && detectPlayerInRange();
 //        sendChatMessage("Can't !ContinuetoUse");
 //Currently stops, But Doesn't relaunch unless the player exits the minimum range after it does a different goal?
@@ -240,7 +223,7 @@ public class BigfootHideGoal extends Goal {
 //    }
 
     public void start() {
-//        sendChatMessage("Start");
+        sendChatMessage("Start");
         this.moveMobBehindTree();
 
 
@@ -258,8 +241,8 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void tick() {
+        System.out.println("OOGABOOGA");
         if(!isBlockFound()){++timeToRun;}
-        System.out.println("Am I on?");
         decreaseTickingSpeed(1);
         if(tickingSpeed<1){resetTick(20);}
 
