@@ -119,7 +119,6 @@ public class BigfootHideGoal extends Goal {
             }
         return false;
     }
-
     protected void moveMobBehindTree(){
         Vec3 blockCenter = this.blockPos.above().getCenter();
         Vec3 directionBetween = returnPlayer().position().subtract(blockCenter).normalize();
@@ -130,6 +129,8 @@ public class BigfootHideGoal extends Goal {
                 vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.35);
 
     }
+
+    //Launch when block isn't found, keep checking if that's changed, since running starts only from 100 it can still find a block normally before that
     protected void runToRandomSpot(){
         Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 15, 7);
         if(randomSpot != null && (timeToRun>=100 && timeToRun <200) && returnPlayer().distanceToSqr(randomSpot)>25) {
@@ -241,7 +242,6 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void tick() {
-        System.out.println("OOGABOOGA");
         if(!isBlockFound()){++timeToRun;}
         decreaseTickingSpeed(1);
         if(tickingSpeed<1){resetTick(20);}

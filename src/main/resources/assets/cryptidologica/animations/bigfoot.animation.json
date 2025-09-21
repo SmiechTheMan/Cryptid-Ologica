@@ -1,11 +1,6 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.bigfoot.idle": {
-			"loop": true,
-			"start_delay": 0,
-			"loop_delay": 1
-		},
 		"animation.bigfoot.walk": {
 			"loop": true,
 			"animation_length": 2,
@@ -24,9 +19,6 @@
 					}
 				},
 				"Arm_Left": {
-					"relative_to": {
-						"rotation": "entity"
-					},
 					"rotation": {
 						"0.0": {
 							"vector": [-10, 0, 0]
@@ -40,9 +32,6 @@
 					}
 				},
 				"Leg_Left": {
-					"relative_to": {
-						"rotation": "entity"
-					},
 					"rotation": {
 						"0.0": {
 							"post": {
@@ -103,9 +92,6 @@
 					}
 				},
 				"Leg_Right": {
-					"relative_to": {
-						"rotation": "entity"
-					},
 					"rotation": {
 						"0.0": {
 							"post": {
@@ -266,6 +252,9 @@
 					}
 				}
 			}
+		},
+		"animation.bigfoot.idle": {
+			"loop": true
 		}
 	},
 	"geckolib_format_version": 2

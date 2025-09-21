@@ -46,7 +46,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
-        controllerRegistrar.add(new AnimationController<GeoAnimatable>(this,"controller",0,this::predicate));
+        controllerRegistrar.add(new AnimationController<GeoAnimatable>(this,"controller",0, this::predicate));
     }
 
     private PlayState predicate(AnimationState<GeoAnimatable> geoAnimatableAnimationState) {
@@ -54,8 +54,9 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity {
             geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.walk", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
         }
-    geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.idle",Animation.LoopType.LOOP));
+    geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.idle", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
+
     }
 
     @Override
