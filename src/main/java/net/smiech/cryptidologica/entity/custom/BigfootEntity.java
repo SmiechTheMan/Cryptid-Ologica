@@ -1,5 +1,8 @@
 package net.smiech.cryptidologica.entity.custom;
 
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -9,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigFootLookAtPlayerGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootHideGoal;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -62,6 +66,21 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getAmbientSound() {
+        return SoundEvents.GRASS_BREAK;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getHurtSound(DamageSource pDamageSource) {
+        return SoundEvents.RAVAGER_HURT;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return SoundEvents.DOLPHIN_DEATH;
     }
 }
 
