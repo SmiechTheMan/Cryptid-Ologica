@@ -1,5 +1,6 @@
 {
   "item.cryptidologica.bigfoot_spawn_egg" : "Bigfoot Spawn Egg",
+  "entity.minecraft.villager.cryptidologica.nutjob": "Nutjob",
 
   "creativetab.cryptidologica_tab" : "Cryptidologica"
 }

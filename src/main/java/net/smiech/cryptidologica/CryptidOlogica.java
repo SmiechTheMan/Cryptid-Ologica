@@ -15,6 +15,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.smiech.cryptidologica.entity.ModEntities;
 import net.smiech.cryptidologica.entity.client.BigfootClient.BigfootRenderer;
+import net.smiech.cryptidologica.entity.villager.ModVillagers;
 import net.smiech.cryptidologica.item.ModCreativeModTabs;
 import net.smiech.cryptidologica.item.ModItems;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ public class CryptidOlogica
         ModItems.register(modEventBus);
         ModEntities.register(modEventBus);
         ModCreativeModTabs.register(modEventBus);
+        ModVillagers.register(modEventBus);
 
     }
 

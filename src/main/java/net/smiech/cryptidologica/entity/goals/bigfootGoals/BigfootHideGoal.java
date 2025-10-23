@@ -224,7 +224,7 @@ public class BigfootHideGoal extends Goal {
 //    }
 
     public void start() {
-        sendChatMessage("Start");
+//        sendChatMessage("Start");
         this.moveMobBehindTree();
 
 
@@ -232,7 +232,7 @@ public class BigfootHideGoal extends Goal {
 
     public void stop() {
             timeToRun = 0;
-        sendChatMessage("stop");
+//        sendChatMessage("stop");
        hasReachedTarget(false);
        hasBlockFound(false);
     }
@@ -254,12 +254,12 @@ public class BigfootHideGoal extends Goal {
         if(!reachedTarget && (tickingSpeed%5==0) && detectPlayerInRange()){
             hasBlockFound(false);
             this.findTreeRoot(this.mob);
-            sendChatMessage("Too close!!");
+//            sendChatMessage("Too close!!");
         }
 
         //not sure if this is still needed but will keep it for now
         if(this.mob.blockPosition().closerToCenterThan(vectorToHide,1)){
-           sendChatMessage("Over block");
+//           sendChatMessage("Over block");
             hasBlockFound(false);
            hasReachedTarget(false);
         }
