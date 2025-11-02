@@ -20,6 +20,27 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
         entity = ((BigfootEntity) pMob);
     }
 
+    //If the target is in range go for them, if not it should activate the other attack goal.
+    //Not everytime tho otherwise the foot will just stand there and throw rocks all the time
+    //so give it like 75% of a chance to throw rock and the other to move forward
+    // also add this check to canContinueToUse
+    @Override
+    public boolean canUse() {
+        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 49)) {
+            return super.canUse();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canContinueToUse() {
+        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 49)) {
+            return super.canContinueToUse();
+        }
+        return false;
+
+    }
+
     @Override
     public void start() {
         super.start();
@@ -29,27 +50,28 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
 
     @Override
     protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-        if (isEnemyWithinAttackDistance(pEnemy,pDistToEnemySqr)){
-            shouldCountTillNextAttack = true;
-
-            if(isTimeToStartAttackAnimation()){
-                entity.setAttacking(true);
-            }
-            if(isTimeToAttack()){
-                this.mob.getLookControl().setLookAt(pEnemy.getX(),pEnemy.getY(),pEnemy.getZ());
-                this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(pEnemy);
-            }
-        }else {
-            resetAttackCooldown();
-            shouldCountTillNextAttack = false;
-            entity.setAttacking(false);
-            entity.attackAnimationTimeout = 0;
-        }
+//        if (isEnemyWithinAttackDistance(pEnemy,pDistToEnemySqr)){
+//            shouldCountTillNextAttack = true;
+//
+//            if(isTimeToStartAttackAnimation()){
+//                entity.setAttacking(true);
+//            }
+//            if(isTimeToAttack()){
+//                this.mob.getLookControl().setLookAt(pEnemy.getX(),pEnemy.getY(),pEnemy.getZ());
+//                this.mob.swing(InteractionHand.MAIN_HAND);
+//                this.mob.doHurtTarget(pEnemy);
+//            }
+//        }else {
+//            resetAttackCooldown();
+//            shouldCountTillNextAttack = false;
+//            entity.setAttacking(false);
+//            entity.attackAnimationTimeout = 0;
+//        }
+        super.checkAndPerformAttack(pEnemy,pDistToEnemySqr);
     }
 
     private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr){
-        return pDistToEnemySqr <=this.getAttackReachSqr(pEnemy);
+        return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
     }
 
     protected boolean isTimeToStartAttackAnimation() {
