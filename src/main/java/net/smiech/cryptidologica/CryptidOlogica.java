@@ -3,6 +3,8 @@ package net.smiech.cryptidologica;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.LlamaSpitRenderer;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -15,6 +17,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.smiech.cryptidologica.entity.ModEntities;
 import net.smiech.cryptidologica.entity.client.BigfootClient.BigfootRenderer;
+import net.smiech.cryptidologica.entity.client.customProjectiles.RockProjectileRenderer;
+import net.smiech.cryptidologica.entity.custom.RockProjectileEntity;
 import net.smiech.cryptidologica.entity.villager.ModVillagers;
 import net.smiech.cryptidologica.item.ModCreativeModTabs;
 import net.smiech.cryptidologica.item.ModItems;
@@ -75,6 +79,7 @@ public class CryptidOlogica
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             EntityRenderers.register(ModEntities.BIGFOOT.get(), BigfootRenderer::new);
+            EntityRenderers.register(ModEntities.ROCK_PROJECTILE.get(), RockProjectileRenderer::new);
 
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");

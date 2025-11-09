@@ -7,16 +7,19 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraft.world.level.Level;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigFootLookAtPlayerGoal;
-import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootHideGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootMeleeAttackGoal;
+import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootRangedAttackGoal;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -31,7 +34,7 @@ import java.util.UUID;
 //if health is too low he will run away and do that portal, which he can be knocked out off, or he will only do that sometimes or after a timer.
 
 
-public class BigfootEntity extends PathfinderMob implements GeoEntity{
+public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAttackMob {
 
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.
             defineId(BigfootEntity.class, EntityDataSerializers.BOOLEAN);
@@ -48,7 +51,8 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity{
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.5D,true));
+//        this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.5D,true));
+        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 12, 20.0F));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
@@ -141,6 +145,22 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity{
         return SoundEvents.DOLPHIN_DEATH;
     }
 
+    private void throwRock(LivingEntity pTarget) {
+        RockProjectileEntity RockProjectile = new RockProjectileEntity(this.level(), this);
+        double targetX = pTarget.getX() - this.getX();
+        double targetY = pTarget.getY(0.3333333333333333) - RockProjectile.getY();
+        double targetZ = pTarget.getZ() - this.getZ();
+        double sqrtTargetDistance = Math.sqrt(targetX * targetX + targetZ * targetZ) * (double)0.2F;
+        RockProjectile.shoot(targetX, targetY + sqrtTargetDistance, targetZ, 1.5F, 10.0F);
+        if (!this.isSilent()) {
+            this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.STONE_BREAK, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+        }
+
+        this.level().addFreshEntity(RockProjectile);
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {this.throwRock(pTarget);}
 }
 
 
