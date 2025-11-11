@@ -40,7 +40,6 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
             defineId(BigfootEntity.class, EntityDataSerializers.BOOLEAN);
     private static final  EntityDataAccessor<Boolean> FLEEING = SynchedEntityData.
             defineId(BigfootEntity.class,EntityDataSerializers.BOOLEAN);
-    public int attackAnimationTimeout = 0;
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
@@ -51,8 +50,8 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-//        this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.5D,true));
-        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 12, 20.0F));
+        this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.7D,true));
+        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 25, 7.0F));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
         this.goalSelector.addGoal(3, new RandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
@@ -65,11 +64,11 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
 
     public static AttributeSupplier.Builder createAttributes(){
         return PathfinderMob.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 2D)
+                .add(Attributes.MAX_HEALTH, 7D)
                 .add(Attributes.MOVEMENT_SPEED, 0.22)
                 .add(Attributes.ARMOR_TOUGHNESS, 0.1f)
                 .add(Attributes.ATTACK_DAMAGE, 2f)
-                .add(Attributes.ATTACK_KNOCKBACK, 0.5f)
+                .add(Attributes.ATTACK_KNOCKBACK, 2.0f)
                 .add(Attributes.FOLLOW_RANGE, 32f);
     }
 
@@ -109,8 +108,10 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         controllerRegistrar.add(new AnimationController<GeoAnimatable>(this,"attackController",0, this::attackPredicate));
     }
     private PlayState attackPredicate(AnimationState<GeoAnimatable> geoAnimatableAnimationState) {
-        if(this.swinging && geoAnimatableAnimationState.getController().getAnimationState().equals(AnimationController.State.STOPPED))
-        geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.melee",Animation.LoopType.PLAY_ONCE));
+        if(this.swinging && geoAnimatableAnimationState.getController().getAnimationState().equals(AnimationController.State.STOPPED)){
+            geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.melee",Animation.LoopType.PLAY_ONCE));
+            this.swinging = false;
+        }
 
         return PlayState.CONTINUE;
     }

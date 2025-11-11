@@ -1,9 +1,9 @@
 package net.smiech.cryptidologica.entity.goals.bigfootGoals;
 
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.level.pathfinder.Path;
 import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
@@ -12,7 +12,6 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
     private int attackDelay = 40;
     private int ticksUntilNextAttack = 40;
     private boolean shouldCountTillNextAttack = false;
-
 
 
     public BigfootMeleeAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen) {
@@ -26,15 +25,15 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
     // also add this check to canContinueToUse
     @Override
     public boolean canUse() {
-        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 49)) {
-            return super.canUse();
+        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 36)){
+                return super.canUse();
         }
         return false;
     }
 
     @Override
     public boolean canContinueToUse() {
-        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 49)) {
+        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 36)) {
             return super.canContinueToUse();
         }
         return false;
@@ -48,50 +47,12 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
         ticksUntilNextAttack = 40;
     }
 
+
+    //This works well enough for now
+    // this.mob.getNavigation().getPath().canReach() seems like a good way to induce the ranged attack;
     @Override
     protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-//        if (isEnemyWithinAttackDistance(pEnemy,pDistToEnemySqr)){
-//            shouldCountTillNextAttack = true;
-//
-//            if(isTimeToStartAttackAnimation()){
-//                entity.setAttacking(true);
-//            }
-//            if(isTimeToAttack()){
-//                this.mob.getLookControl().setLookAt(pEnemy.getX(),pEnemy.getY(),pEnemy.getZ());
-//                this.mob.swing(InteractionHand.MAIN_HAND);
-//                this.mob.doHurtTarget(pEnemy);
-//            }
-//        }else {
-//            resetAttackCooldown();
-//            shouldCountTillNextAttack = false;
-//            entity.setAttacking(false);
-//            entity.attackAnimationTimeout = 0;
-//        }
         super.checkAndPerformAttack(pEnemy,pDistToEnemySqr);
-    }
-
-    private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr){
-        return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
-    }
-
-    protected boolean isTimeToStartAttackAnimation() {
-        return this.ticksUntilNextAttack <= attackDelay;
-    }
-
-    protected void resetAttackCooldown() {
-        this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay*2);
-    }
-
-    protected boolean isTimeToAttack() {
-        return this.ticksUntilNextAttack <= 0;
-    }
-
-    protected int getTicksUntilNextAttack() {
-        return this.ticksUntilNextAttack;
-    }
-
-    protected int getAttackInterval() {
-        return this.adjustedTickDelay(20);
     }
 
     @Override
@@ -106,5 +67,15 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
     public void stop() {
         entity.setAttacking(false);
         super.stop();
+    }
+
+    @Override
+    protected void resetAttackCooldown() {
+        super.resetAttackCooldown();
+    }
+
+    @Override
+    protected double getAttackReachSqr(LivingEntity pAttackTarget) {
+        return (this.mob.getBbWidth() * 3.0F * this.mob.getBbWidth() * 3.0F + pAttackTarget.getBbWidth());
     }
 }
