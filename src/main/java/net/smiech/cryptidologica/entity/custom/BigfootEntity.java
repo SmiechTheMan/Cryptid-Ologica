@@ -15,7 +15,6 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraft.world.level.Level;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigFootLookAtPlayerGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootMeleeAttackGoal;
@@ -28,8 +27,6 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.UUID;
-
 //For bigfoots attacking, he will attack the player that started it and players around them. ranged attacks by throwing rocks and melee for normal
 //if health is too low he will run away and do that portal, which he can be knocked out off, or he will only do that sometimes or after a timer.
 
@@ -39,6 +36,8 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.
             defineId(BigfootEntity.class, EntityDataSerializers.BOOLEAN);
     private static final  EntityDataAccessor<Boolean> FLEEING = SynchedEntityData.
+            defineId(BigfootEntity.class,EntityDataSerializers.BOOLEAN);
+    private static final  EntityDataAccessor<Boolean> CANREACHTARGET = SynchedEntityData.
             defineId(BigfootEntity.class,EntityDataSerializers.BOOLEAN);
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
@@ -53,8 +52,8 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.7D,true));
         this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 25, 7.0F));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
-        this.goalSelector.addGoal(3, new RandomStrollGoal(this, 0.5));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(2, new BigFootLookAtPlayerGoal(this, Player.class, 25f,1f));
 //        this.goalSelector.addGoal(1, new BigfootHideGoal(this,20));
 
@@ -93,11 +92,20 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         return this.entityData.get(ATTACKING);
     }
 
+    public void setCanReachTarget(boolean canReachTarget){
+        this.entityData.set(CANREACHTARGET, canReachTarget);
+    }
+
+    public boolean isCanReachTarget(){
+        return this.entityData.get(CANREACHTARGET);
+    }
+
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ATTACKING,false);
         this.entityData.define(FLEEING,false);
+        this.entityData.define(CANREACHTARGET, false);
     }
 
     //ANIMATIONS AND SFX

@@ -3,16 +3,11 @@ package net.smiech.cryptidologica.entity.goals.bigfootGoals;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.level.pathfinder.Path;
 import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
 
     private final BigfootEntity entity;
-    private int attackDelay = 40;
-    private int ticksUntilNextAttack = 40;
-    private boolean shouldCountTillNextAttack = false;
-
 
     public BigfootMeleeAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen) {
         super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
@@ -25,15 +20,20 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
     // also add this check to canContinueToUse
     @Override
     public boolean canUse() {
-        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 36)){
-                return super.canUse();
+        if((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),
+                1)!=null && this.entity.getNavigation().createPath(entity.getTarget(),1).canReach()){
+                    System.out.println("CanUse ReachVar Status:" + this.entity.getNavigation().createPath(entity.getTarget(),3).canReach());
+                    return super.canUse();
         }
         return false;
     }
-
+    //CanUse but with a check to see if the entity can reach (PathFind) it's target
+    //(entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 36)
     @Override
     public boolean canContinueToUse() {
-        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 36)) {
+        if((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),
+                1)!=null && this.entity.getNavigation().createPath(entity.getTarget(),1).canReach()) {
+            System.out.println("cCtU Reach Status: " + this.entity.getNavigation().createPath(entity.getTarget(),1).canReach());
             return super.canContinueToUse();
         }
         return false;
@@ -43,8 +43,6 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
     @Override
     public void start() {
         super.start();
-        attackDelay = 40;
-        ticksUntilNextAttack = 40;
     }
 
 
@@ -57,15 +55,15 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
 
     @Override
     public void tick() {
-        super.tick();
-        if (shouldCountTillNextAttack){
-            this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+        if ((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),1)!=null){
+           System.out.println("Tick creating path: "+ this.entity.getNavigation().createPath(entity.getTarget(),3).canReach());
+            System.out.println("Tick path Length: "+ this.entity.getNavigation().createPath(entity.getTarget(),3));
         }
+        super.tick();
     }
 
     @Override
     public void stop() {
-        entity.setAttacking(false);
         super.stop();
     }
 
