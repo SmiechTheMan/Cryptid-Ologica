@@ -17,6 +17,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigFootLookAtPlayerGoal;
+import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootHideGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootMeleeAttackGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootRangedAttackGoal;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +28,7 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 
-//For bigfoots attacking, he will attack the player that started it and players around them. ranged attacks by throwing rocks and melee for normal
-//if health is too low he will run away and do that portal, which he can be knocked out off, or he will only do that sometimes or after a timer.
+
 
 
 public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAttackMob {
@@ -55,7 +55,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(2, new BigFootLookAtPlayerGoal(this, Player.class, 25f,1f));
-//        this.goalSelector.addGoal(1, new BigfootHideGoal(this,20));
+        this.goalSelector.addGoal(1, new BigfootHideGoal(this,20));
 
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
 
@@ -117,8 +117,10 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     }
     private PlayState attackPredicate(AnimationState<GeoAnimatable> geoAnimatableAnimationState) {
         if(this.swinging && geoAnimatableAnimationState.getController().getAnimationState().equals(AnimationController.State.STOPPED)){
+            geoAnimatableAnimationState.resetCurrentAnimation();
             geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.melee",Animation.LoopType.PLAY_ONCE));
             this.swinging = false;
+
         }
 
         return PlayState.CONTINUE;
@@ -152,6 +154,12 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     @Override
     protected @Nullable SoundEvent getDeathSound() {
         return SoundEvents.DOLPHIN_DEATH;
+    }
+
+    @Override
+    public void tick() {
+        System.out.println(this.swinging);
+        super.tick();
     }
 
     private void throwRock(LivingEntity pTarget) {

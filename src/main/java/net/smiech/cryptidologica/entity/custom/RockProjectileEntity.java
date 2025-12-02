@@ -67,7 +67,7 @@ public class RockProjectileEntity extends Projectile {
             if(disableShield(player)){
                 player.hurt(this.damageSources().mobProjectile(this, player),1.0f);
             }else{
-                player.hurt(this.damageSources().mobProjectile(this, player),2.0f);
+                player.hurt(this.damageSources().mobProjectile(this, player),0.0f);
             }
         }
 
@@ -99,7 +99,7 @@ public class RockProjectileEntity extends Projectile {
         double d1 = pPacket.getYa();
         double d2 = pPacket.getZa();
 
-        for(int i = 0; i < 7; ++i) {
+        for(int i = 0; i < 2; ++i) {
             double d3 = 0.4 + 0.1 * (double)i;
             this.level().addParticle(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), d0 * d3, d1, d2 * d3);
         }

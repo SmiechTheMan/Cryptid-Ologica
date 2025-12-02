@@ -4,6 +4,8 @@ package net.smiech.cryptidologica.entity.goals.bigfootGoals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
@@ -12,6 +14,7 @@ import net.minecraft.world.level.CollisionGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 import java.util.EnumSet;
 
@@ -26,6 +29,7 @@ public class BigfootHideGoal extends Goal {
     protected Player target;
     protected Vec3 vectorToHide;
     protected static int timeToRun = 0;
+    private boolean running = false;
 
     public BigfootHideGoal(PathfinderMob mob, int tickingSpeed) {
         this.tickingSpeed = tickingSpeed;
@@ -47,7 +51,7 @@ public class BigfootHideGoal extends Goal {
 //Repeate moving to goal until reached target is true, do this in can use, with found block and hasn't reached target it will run the move behind
     //and also a check to see if the block hasn't been altered
 
-
+    //looks for wanted block
     protected boolean findTreeRoot(PathfinderMob pMob){
        BlockPos mobPosition = pMob.blockPosition();
        int blockVerticalSearch = 10;
@@ -74,16 +78,15 @@ public class BigfootHideGoal extends Goal {
 
         return false;
     }
-            //  wonder if that's due to me being close to them or no
-    //it probably is just me appearing too close to it and other trees
+    //change the player detection, so bigfoot doesn't freeze if people are too close
+    //scans for blocks around the found wanted block. Looking if there's empty space the entity could hide behind it
     private boolean isTree(Level pLevel, BlockPos pPos) {
-//
             BlockState currentBlock = pLevel.getBlockState(pPos);
-            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 16*16)){
+            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 12*12)){
                 BlockPos.MutableBlockPos rootBlockPos = new BlockPos.MutableBlockPos();
                 rootBlockPos.set(pPos);
                 int distanceForSearch = 5;
-                //Algorithim for checking if this block is actually a tree or a freestanding WoodBlock
+                //Algorithm for checking if this block is actually a tree or a freestanding WoodBlock
                 //Goes down from the found block down until it reaches Dirt
                 while(pLevel.getBlockState(rootBlockPos).is(BlockTags.LOGS) && distanceForSearch > 0){
                     --distanceForSearch;
@@ -119,6 +122,7 @@ public class BigfootHideGoal extends Goal {
             }
         return false;
     }
+    //increase speed incrementally
     protected void moveMobBehindTree(){
         Vec3 blockCenter = this.blockPos.above().getCenter();
         Vec3 directionBetween = returnPlayer().position().subtract(blockCenter).normalize();
@@ -129,7 +133,7 @@ public class BigfootHideGoal extends Goal {
                 vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.35);
 
     }
-
+    //When a recode happens probably make it it's own goal
     //Launch when block isn't found, keep checking if that's changed, since running starts only from 100 it can still find a block normally before that
     protected void runToRandomSpot(){
         Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 15, 7);
@@ -158,9 +162,8 @@ public class BigfootHideGoal extends Goal {
                         if (k != 1 && j != 1
                                 && !((pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))
                               && pPlayer.isCrouching())
-//                               && (pPlayer.isCreative())
+                               && (pPlayer.isCreative())
                         ) {
-                            System.out.println("When does this trigger");
                             return false;
                         }
                     }
@@ -241,6 +244,8 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void tick() {
+
+
         if(!isBlockFound()){++timeToRun;}
         decreaseTickingSpeed(1);
         if(tickingSpeed<1){resetTick(20);}
@@ -264,6 +269,9 @@ public class BigfootHideGoal extends Goal {
         }
         if(tickingSpeed%10==0 && !isBlockFound() && !isReachedTarget() ){
         System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget() + " timetorun " + timeToRun);
+        }
+        if (this.mob.getLastDamageSource()!=null && this.mob.getLastDamageSource().getEntity() instanceof LivingEntity){
+            stop();
         }
     }
 }

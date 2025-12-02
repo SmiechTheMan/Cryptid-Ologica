@@ -14,10 +14,7 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
         entity = ((BigfootEntity) pMob);
     }
 
-    //If the target is in range go for them, if not it should activate the other attack goal.
-    //Not everytime tho otherwise the foot will just stand there and throw rocks all the time
-    //so give it like 75% of a chance to throw rock and the other to move forward
-    // also add this check to canContinueToUse
+    //Checks if target is under the required range or if a (created) path to the target allows the entity to reach it
     @Override
     public boolean canUse() {
         if((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),
@@ -27,8 +24,7 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
         }
         return false;
     }
-    //CanUse but with a check to see if the entity can reach (PathFind) it's target
-    //(entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) < 36)
+
     @Override
     public boolean canContinueToUse() {
         if((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),
@@ -45,9 +41,6 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
         super.start();
     }
 
-
-    //This works well enough for now
-    // this.mob.getNavigation().getPath().canReach() seems like a good way to induce the ranged attack;
     @Override
     protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
         super.checkAndPerformAttack(pEnemy,pDistToEnemySqr);
@@ -55,10 +48,6 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
 
     @Override
     public void tick() {
-        if ((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),1)!=null){
-           System.out.println("Tick creating path: "+ this.entity.getNavigation().createPath(entity.getTarget(),3).canReach());
-            System.out.println("Tick path Length: "+ this.entity.getNavigation().createPath(entity.getTarget(),3));
-        }
         super.tick();
     }
 
