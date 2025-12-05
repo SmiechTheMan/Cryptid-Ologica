@@ -14,16 +14,17 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.smiech.cryptidologica.CryptidOlogica;
 import net.smiech.cryptidologica.entity.custom.RockProjectileEntity;
 
 @OnlyIn(Dist.CLIENT)
 public class RockProjectileRenderer extends EntityRenderer<RockProjectileEntity> {
-    private static final ResourceLocation ROCK_PROJECTILE_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/llama/spit.png");
-    private final LlamaSpitModel<LlamaSpit> model;
+    private static final ResourceLocation ROCK_PROJECTILE_LOCATION = ResourceLocation.fromNamespaceAndPath(CryptidOlogica.MOD_ID,"textures/entity/rock_projectile_texture.png");
+    private final RockProjectileModel<RockProjectileEntity> model;
 
     public RockProjectileRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
-        this.model = new LlamaSpitModel(pContext.bakeLayer(ModelLayers.LLAMA_SPIT));
+        this.model = new RockProjectileModel<>(pContext.bakeLayer(RockProjectileModel.ROCK_PROJECTILE));
     }
 
     @Override

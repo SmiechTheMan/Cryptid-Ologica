@@ -43,14 +43,12 @@ public class RockProjectileEntity extends Projectile {
         double d1 = this.getY() + vec3.y;
         double d2 = this.getZ() + vec3.z;
         this.updateRotation();
-        float f = 0.99F;
-        float f1 = 0.06F;
         if (this.level().getBlockStates(this.getBoundingBox()).noneMatch(BlockBehaviour.BlockStateBase::isAir)) {
             this.discard();
         } else if (this.isInWaterOrBubble()) {
             this.discard();
         } else {
-            this.setDeltaMovement(vec3.scale((double)0.99F));
+            this.setDeltaMovement(vec3.scale((double).06F));
             if (!this.isNoGravity()) {
                 this.setDeltaMovement(this.getDeltaMovement().add((double)0.0F, (double)-0.06F, (double)0.0F));
             }
@@ -63,11 +61,11 @@ public class RockProjectileEntity extends Projectile {
     protected void onHitEntity(EntityHitResult pResult) {
         super.onHitEntity(pResult);
 
-        if(pResult.getEntity() instanceof Player player){
-            if(disableShield(player)){
-                player.hurt(this.damageSources().mobProjectile(this, player),1.0f);
+        if(pResult.getEntity() instanceof Player pPlayer){
+            if(disableShield(pPlayer)){
+                pPlayer.hurt(this.damageSources().mobProjectile(this, pPlayer),1.0f);
             }else{
-                player.hurt(this.damageSources().mobProjectile(this, player),0.0f);
+                pPlayer.hurt(this.damageSources().mobProjectile(this, pPlayer),0.0f);
             }
         }
 
@@ -93,6 +91,8 @@ public class RockProjectileEntity extends Projectile {
 
     }
 
+
+    //creates explosion effect
     public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
         super.recreateFromPacket(pPacket);
         double d0 = pPacket.getXa();
