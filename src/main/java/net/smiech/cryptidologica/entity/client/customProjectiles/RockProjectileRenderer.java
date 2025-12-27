@@ -28,10 +28,10 @@ public class RockProjectileRenderer extends EntityRenderer<RockProjectileEntity>
 
     public void render(RockProjectileEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
         pPoseStack.pushPose();
-
         pPoseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.yRotO, pEntity.getYRot()) - 90.0F));
         pPoseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(pPartialTicks, pEntity.xRotO, pEntity.getXRot())));
         pPoseStack.translate(0.0F, -1F, 0.0F);
+        pPoseStack.mulPose(Axis.YN.rotationDegrees(90f));
         this.model.setupAnim(pEntity, pPartialTicks, 0.0F, -0.1F, 0.0F, 0.0F);
         VertexConsumer textureBuffer = pBuffer.getBuffer(this.model.renderType(ROCK_PROJECTILE_LOCATION));
         this.model.renderToBuffer(pPoseStack, textureBuffer, pPackedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);

@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.smiech.cryptidologica.CryptidOlogica;
 import net.smiech.cryptidologica.entity.ModEntities;
 import net.smiech.cryptidologica.entity.client.customProjectiles.RockProjectileModel;
+import net.smiech.cryptidologica.entity.client.tinfoilhat.TinFoilHatModel;
 import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 import net.smiech.cryptidologica.entity.custom.RockProjectileEntity;
 
@@ -19,5 +20,6 @@ public class ModEventBusEvents {
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){
         event.registerLayerDefinition(RockProjectileModel.ROCK_PROJECTILE, RockProjectileModel::createBodyLayer);
+        event.registerLayerDefinition(TinFoilHatModel.TINFOIL_HAT, TinFoilHatModel::createBodyLayer);
     }
 }

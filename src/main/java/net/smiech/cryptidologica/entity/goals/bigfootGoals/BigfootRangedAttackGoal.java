@@ -25,23 +25,14 @@ public class BigfootRangedAttackGoal extends RangedAttackGoal {
 
     @Override
     public boolean canContinueToUse() {
-        if((entity.getTarget() !=null) && (entity.distanceToSqr(entity.getTarget()) > 36)
-                || ((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(), 1)!=null
-                && !this.entity.getNavigation().createPath(entity.getTarget(),1).canReach())) {
-            return super.canContinueToUse();
-        }
-        return false;
+        return this.canUse() || this.entity.getTarget().isAlive() && !this.entity.getNavigation().isDone();
     }
 
     @Override
-    public void tick() {
-        super.tick();
-    }
+    public void tick() { super.tick(); }
 
     @Override
-    public void start() {
-        super.start();
-    }
+    public void start() { super.start(); }
 
     @Override
     public void stop() {

@@ -50,7 +50,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.7D,true));
-        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 25, 7.0F));
+        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 24, 7.0F));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
         this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
@@ -165,10 +165,10 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     private void throwRock(LivingEntity pTarget) {
         RockProjectileEntity RockProjectile = new RockProjectileEntity(this.level(), this);
         double targetX = pTarget.getX() - this.getX();
-        double targetY = pTarget.getY(0.3333333333333333) - RockProjectile.getY();
+        double targetY = pTarget.getY(0.3333333333333333) - RockProjectile.getY() + 1;
         double targetZ = pTarget.getZ() - this.getZ();
         double sqrtTargetDistance = Math.sqrt(targetX * targetX + targetZ * targetZ) * (double)0.2F;
-        RockProjectile.shoot(targetX, targetY + sqrtTargetDistance, targetZ, 1.5F, 10.0F);
+        RockProjectile.shoot(targetX, targetY + sqrtTargetDistance, targetZ, 0.6F, 5.0F);
         if (!this.isSilent()) {
             this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.STONE_BREAK, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
         }

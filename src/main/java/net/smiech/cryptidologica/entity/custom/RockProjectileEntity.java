@@ -28,7 +28,7 @@ public class RockProjectileEntity extends Projectile {
     public RockProjectileEntity(Level pLevel, LivingEntity pBigfoot) {
         this(ModEntities.ROCK_PROJECTILE.get(), pLevel);
         this.setOwner(pBigfoot);
-        this.setPos(pBigfoot.getX() - (double)(pBigfoot.getBbWidth() + 1.0F) * (double)0.5F * (double) Mth.sin(pBigfoot.yBodyRot * ((float)Math.PI / 180F)), pBigfoot.getEyeY() - (double)0.1F, pBigfoot.getZ() + (double)(pBigfoot.getBbWidth() + 1.0F) * (double)0.5F * (double)Mth.cos(pBigfoot.yBodyRot * ((float)Math.PI / 180F)));
+        this.setPos(pBigfoot.getX() - (double)(pBigfoot.getBbWidth() + 1.0F) * (double)0.5F * (double) Mth.sin(pBigfoot.yBodyRot * ((float)Math.PI / 180F)), pBigfoot.getEyeY() - (double)0.1F + 1, pBigfoot.getZ() + (double)(pBigfoot.getBbWidth() + 1.0F) * (double)0.5F * (double)Mth.cos(pBigfoot.yBodyRot * ((float)Math.PI / 180F)));
     }
 
     public void tick() {
@@ -50,13 +50,20 @@ public class RockProjectileEntity extends Projectile {
         } else if (this.isInWaterOrBubble()) {
             this.discard();
         } else {
-            this.setDeltaMovement(vec3.scale((double).06F));
+            this.setDeltaMovement(vec3.scale((double)0.99F));
             if (!this.isNoGravity()) {
-                this.setDeltaMovement(this.getDeltaMovement().add((double)0.0F, (double)-0.06F, (double)0.0F));
+                //Speed of the projectile? well more like gravity
+                this.setDeltaMovement(this.getDeltaMovement().add((double)0.0F, (double)-0.03F, (double)0.0F));
             }
 
             this.setPos(d0, d1, d2);
         }
+
+    }
+
+    @Override
+    protected void onHit(HitResult pResult) {
+        super.onHit(pResult);
 
     }
 
@@ -68,9 +75,10 @@ public class RockProjectileEntity extends Projectile {
                 pPlayer.hurt(this.damageSources().mobProjectile(this, pPlayer),1.0f);
             }else{
                 pPlayer.hurt(this.damageSources().mobProjectile(this, pPlayer),0.0f);
+
             }
         }
-
+        this.discard();
     }
 
     private boolean disableShield(Player player){
@@ -85,6 +93,7 @@ public class RockProjectileEntity extends Projectile {
         super.onHitBlock(pResult);
         if (!this.level().isClientSide) {
             this.discard();
+
         }
 
     }
