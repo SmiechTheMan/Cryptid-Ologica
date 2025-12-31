@@ -80,7 +80,6 @@ public class CryptidOlogica
         {
             EntityRenderers.register(ModEntities.BIGFOOT.get(), BigfootRenderer::new);
             EntityRenderers.register(ModEntities.ROCK_PROJECTILE.get(), RockProjectileRenderer::new);
-
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());

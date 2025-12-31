@@ -1,28 +1,35 @@
 package net.smiech.cryptidologica.entity.client.tinfoilhat;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.VillagerModel;
-import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.VillagerHeadModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.world.entity.npc.Villager;
-import net.smiech.cryptidologica.entity.ModEntities;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.VillagerDataHolder;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.smiech.cryptidologica.CryptidOlogica;
 import net.smiech.cryptidologica.entity.villager.ModVillagers;
 
 
-public class TinFoilHatLayer extends RenderLayer<Villager, VillagerModel<Villager>>{
-    private final VillagerModel<Villager> model;
+public class TinFoilHatLayer<T extends LivingEntity & VillagerDataHolder, M extends EntityModel<T> & VillagerHeadModel> extends RenderLayer<T, M>{
 
-    public TinFoilHatLayer(RenderLayerParent<Villager, VillagerModel<Villager>> pRenderer, EntityModelSet pModelSet) {
+    ResourceLocation tinFoilHatTexture = ResourceLocation.fromNamespaceAndPath(CryptidOlogica.MOD_ID,"textures/entity/armor/tinfoilhattexture.png");
+    public TinFoilHatLayer(RenderLayerParent<T, M> pRenderer) {
         super(pRenderer);
-        this.model = new VillagerModel<>(pModelSet.bakeLayer(TinFoilHatModel.TINFOIL_HAT));
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, Villager villager, float v, float v1, float v2, float v3, float v4, float v5) {
-        if (villager.getVillagerData().getProfession() == ModVillagers.NUTJOB.get()){
+    public void render(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+        if (!pLivingEntity.isInvisible()) {
+            VillagerProfession villagerProfession = (pLivingEntity).getVillagerData().getProfession();
+                if(villagerProfession == ModVillagers.NUTJOB.get()){
+                    pPoseStack.pushPose();
 
+                    pPoseStack.popPose();
+                }
         }
     }
 }
