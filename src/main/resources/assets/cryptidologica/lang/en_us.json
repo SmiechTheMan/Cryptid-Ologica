@@ -2,5 +2,7 @@
   "item.cryptidologica.bigfoot_spawn_egg" : "Bigfoot Spawn Egg",
   "entity.minecraft.villager.cryptidologica.nutjob": "Nutjob",
 
+  "block.cryptidologica.computer_station": "Computer Station",
+
   "creativetab.cryptidologica_tab" : "Cryptidologica"
 }

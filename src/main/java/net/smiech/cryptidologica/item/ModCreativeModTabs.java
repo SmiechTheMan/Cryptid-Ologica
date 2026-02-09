@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.smiech.cryptidologica.CryptidOlogica;
+import net.smiech.cryptidologica.block.ModBlocks;
 
 public class ModCreativeModTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
@@ -19,6 +20,7 @@ public static final RegistryObject<CreativeModeTab> CRYPTIDOLOGICA_TAB = CREATIV
                 .title(Component.translatable("creativetab.cryptidologica_tab")).displayItems((pParameters, pOutput) -> {
 
                     pOutput.accept(ModItems.BIGFOOT_SPAWN_EGG.get());
+                    pOutput.accept(ModBlocks.COMPUTER_STATION.get());
 
                 }).build());
 

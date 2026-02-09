@@ -15,6 +15,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.smiech.cryptidologica.block.ModBlocks;
+import net.smiech.cryptidologica.block.entity.ModBlockEntities;
 import net.smiech.cryptidologica.entity.ModEntities;
 import net.smiech.cryptidologica.entity.client.BigfootClient.BigfootRenderer;
 import net.smiech.cryptidologica.entity.client.customProjectiles.RockProjectileRenderer;
@@ -46,9 +48,15 @@ public class CryptidOlogica
 
 
         ModItems.register(modEventBus);
+
+        ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
+
         ModEntities.register(modEventBus);
-        ModCreativeModTabs.register(modEventBus);
         ModVillagers.register(modEventBus);
+
+        ModCreativeModTabs.register(modEventBus);
+
 
     }
 

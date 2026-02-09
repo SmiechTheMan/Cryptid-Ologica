@@ -3,9 +3,11 @@ package net.smiech.cryptidologica.datagen;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 import net.smiech.cryptidologica.CryptidOlogica;
+import net.smiech.cryptidologica.block.ModBlocks;
 
 public class ModBlockStateProvider extends BlockStateProvider {
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
@@ -14,7 +16,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-
+    simpleBlockWithItem(ModBlocks.COMPUTER_STATION.get(),
+            new ModelFile.UncheckedModelFile(modLoc("block/computer_station")));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject){
