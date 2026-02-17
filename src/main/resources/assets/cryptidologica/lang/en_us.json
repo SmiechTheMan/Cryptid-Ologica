@@ -3,6 +3,7 @@
   "entity.minecraft.villager.cryptidologica.nutjob": "Nutjob",
 
   "block.cryptidologica.computer_station": "Computer Station",
+  "container.cryptidologica.computer_station_block_title": "Main Menu",
 
   "creativetab.cryptidologica_tab" : "Cryptidologica"
 }
