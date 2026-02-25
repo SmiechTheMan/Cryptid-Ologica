@@ -2,6 +2,7 @@ package net.smiech.cryptidologica.block.custom;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -17,9 +18,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import net.smiech.cryptidologica.block.ModBlocks;
 import net.smiech.cryptidologica.block.entity.ComputerStationBlockEntity;
 import net.smiech.cryptidologica.block.entity.ModBlockEntities;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -40,6 +43,20 @@ public class ComputerStationBlock extends HorizontalDirectionalBlock implements 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pBlockPos, BlockState pBlockState) {
         return ModBlockEntities.COMPUTER_STATION_BE.get().create(pBlockPos,pBlockState);
+    }
+
+    @Override
+    public @NotNull InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        BlockEntity be = pLevel.getBlockEntity(pPos);
+        if(!(be instanceof ComputerStationBlockEntity blockEntity))
+            return InteractionResult.PASS;
+
+        if(pLevel.isClientSide())
+            return InteractionResult.SUCCESS;
+        if (pPlayer instanceof ServerPlayer sPlayer){
+            NetworkHooks.openScreen(sPlayer,blockEntity,pPos);
+        }
+        return InteractionResult.CONSUME;
     }
 
     @Override

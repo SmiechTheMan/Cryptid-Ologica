@@ -31,6 +31,8 @@ public class ComputerStationBlockEntity extends BlockEntity implements MenuProvi
 
     }
 
+    //The amount of slots will be 1 for the main menu, so it can unlock
+
     @Override
     public Component getDisplayName() {
         return TITLE;
@@ -38,6 +40,6 @@ public class ComputerStationBlockEntity extends BlockEntity implements MenuProvi
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
-        return new ComputerStationMainMenu(pContainerId, pInventory, pPlayer);
+        return new ComputerStationMainMenu(pContainerId, pInventory, this);
     }
 }

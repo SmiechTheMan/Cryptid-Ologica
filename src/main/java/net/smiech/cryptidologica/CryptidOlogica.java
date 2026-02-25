@@ -3,8 +3,6 @@ package net.smiech.cryptidologica;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -20,8 +18,8 @@ import net.smiech.cryptidologica.block.entity.ModBlockEntities;
 import net.smiech.cryptidologica.entity.ModEntities;
 import net.smiech.cryptidologica.entity.client.BigfootClient.BigfootRenderer;
 import net.smiech.cryptidologica.entity.client.customProjectiles.RockProjectileRenderer;
-import net.smiech.cryptidologica.entity.client.tinfoilhat.TinFoilHatLayer;
 import net.smiech.cryptidologica.entity.villager.ModVillagers;
+import net.smiech.cryptidologica.gui.ModMenus;
 import net.smiech.cryptidologica.item.ModCreativeModTabs;
 import net.smiech.cryptidologica.item.ModItems;
 import org.slf4j.Logger;
@@ -51,6 +49,8 @@ public class CryptidOlogica
 
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+
+        ModMenus.register(modEventBus);
 
         ModEntities.register(modEventBus);
         ModVillagers.register(modEventBus);
