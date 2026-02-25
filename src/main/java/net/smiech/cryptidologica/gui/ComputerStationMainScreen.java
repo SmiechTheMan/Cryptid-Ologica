@@ -31,7 +31,7 @@ public class ComputerStationMainScreen extends AbstractContainerScreen<ComputerS
     protected void init() {
         super.init();
         this.imageHeight = 256;
-        this.imageWidth = 256;
+        this.imageWidth = 384;
         this.inventoryLabelY = 10000;
         this. titleLabelY = 10000;
         this.leftPos = (this.width - imageWidth)/2;
@@ -41,7 +41,7 @@ public class ComputerStationMainScreen extends AbstractContainerScreen<ComputerS
     @Override
     protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         renderBackground(pGuiGraphics);
-        pGuiGraphics.blit(CS_MAIN_MENU_TEXTURE,this.leftPos, this.rightPos,0,0,this.imageWidth,this.imageHeight,256,256);
+        pGuiGraphics.blit(CS_MAIN_MENU_TEXTURE,this.leftPos, this.rightPos,0,0,this.imageWidth,this.imageHeight,384,256);
     }
 
     @Override
