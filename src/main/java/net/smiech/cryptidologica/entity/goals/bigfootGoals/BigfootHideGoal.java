@@ -29,7 +29,6 @@ public class BigfootHideGoal extends Goal {
     protected Player target;
     protected Vec3 vectorToHide;
     protected static int timeToRun = 0;
-    private boolean running = false;
 
     public BigfootHideGoal(PathfinderMob mob, int tickingSpeed) {
         this.tickingSpeed = tickingSpeed;
@@ -51,7 +50,8 @@ public class BigfootHideGoal extends Goal {
 //Repeate moving to goal until reached target is true, do this in can use, with found block and hasn't reached target it will run the move behind
     //and also a check to see if the block hasn't been altered
 
-    //looks for wanted block
+    //looks for wanted block searching for it in a "growing patter, 1 to each side of the last searched block
+    // then checks if the block is a tree, sets hasBlockFound to true and then returns true otherwise false
     protected boolean findTreeRoot(PathfinderMob pMob){
        BlockPos mobPosition = pMob.blockPosition();
        int blockVerticalSearch = 10;
@@ -123,9 +123,12 @@ public class BigfootHideGoal extends Goal {
         return false;
     }
     //increase speed incrementally
+    //Moves bigfoot behind a tree based on player position so he is (most of the time) hidding behind a tree
+    // then have him move there
     protected void moveMobBehindTree(){
         Vec3 blockCenter = this.blockPos.above().getCenter();
         Vec3 directionBetween = returnPlayer().position().subtract(blockCenter).normalize();
+
         this.vectorToHide= blockCenter.subtract(directionBetween.scale(1.2));
         System.out.println(blockPos + " vector ; " + vectorToHide);
         System.out.println("MoveBehindTree start");
@@ -133,7 +136,7 @@ public class BigfootHideGoal extends Goal {
                 vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.35);
 
     }
-    //When a recode happens probably make it it's own goal
+    //When a recode happens probably make this its own goal
     //Launch when block isn't found, keep checking if that's changed, since running starts only from 100 it can still find a block normally before that
     protected void runToRandomSpot(){
         Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 15, 7);
@@ -149,6 +152,9 @@ public class BigfootHideGoal extends Goal {
 
     //When the player walks out of the leaves, it's stuck in a loop until the goal ends
 
+    //checks if the player is surrounded by a 3x3 leaf "coffin".
+    //Returns false if the player isn't in the leaf coffin, is in creative or is crouching
+    //It has to return a false to work because I'm bad and it hasn't been implemented in a clear way
     protected boolean isPlayerInleaves(Player pPlayer) {
         if (pPlayer !=null) {
             BlockPos leafCheckPlayerPos = pPlayer.blockPosition();
@@ -173,7 +179,7 @@ public class BigfootHideGoal extends Goal {
         }
         return false;
     }
-
+    //detects if there is a player in specified range that isn't inside of the leaves
     protected boolean detectPlayerInRange(){
         if (returnPlayer().distanceToSqr(this.mob) < 18*18){
            return !isPlayerInleaves(returnPlayer());

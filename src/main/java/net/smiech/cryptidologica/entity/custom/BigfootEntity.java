@@ -1,10 +1,12 @@
 package net.smiech.cryptidologica.entity.custom;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,13 +15,17 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigFootLookAtPlayerGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootHideGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootMeleeAttackGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootRangedAttackGoal;
+import net.smiech.cryptidologica.entity.pathfinding.BigfootCustomNavigation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -27,9 +33,6 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
-
-
-
 
 public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAttackMob {
 
@@ -71,10 +74,16 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
                 .add(Attributes.FOLLOW_RANGE, 32f);
     }
 
+    @Override
+    protected PathNavigation createNavigation(Level pLevel) {
+        if (this instanceof BigfootEntity){
+            return new BigfootCustomNavigation(this,this.level());
+        }else {
+            return super.createNavigation(pLevel);
+        }
+    }
 
-
-
-    //ENTITY DATA
+//ENTITY DATA
 
     public void setFleeing(boolean fleeing){
         this.entityData.set(FLEEING, fleeing);
@@ -156,9 +165,22 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         return SoundEvents.DOLPHIN_DEATH;
     }
 
+    //currently crashes if touches player :), implement a throw to catch the value when it crashes maybe???
+    //It also appears to crash when it's not in leaves
+    //so it has to do with the general path finder not even existing it seems, I guess can reach==false it crashes??
+    //Checks if the next node in the path is a leaves block if it is then turn off gravity and physics to clip it into it then reset it every 2nd tick
     @Override
     public void tick() {
-        System.out.println(this.swinging);
+        if (this.getTarget()!=null && this.getNavigation().getPath()!=null && this.level().getBlockState(this.getNavigation().getPath().getNextNodePos().above()).is(BlockTags.LEAVES)){
+            System.out.println("tick:"+this.getTick(this)+ " above:"+ this.getNavigation().getPath().getNextNodePos().above());
+            this.noPhysics = true;
+            this.setNoGravity(true);
+            System.out.println(this.noPhysics);
+        }
+        if (this.noPhysics==true && this.getTick(this)%2==0){
+            this.noPhysics = false;
+            this.setNoGravity(false);
+        }
         super.tick();
     }
 
@@ -179,5 +201,3 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     @Override
     public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {this.throwRock(pTarget);}
 }
-
-
