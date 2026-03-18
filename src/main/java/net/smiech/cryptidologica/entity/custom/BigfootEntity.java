@@ -1,6 +1,7 @@
 package net.smiech.cryptidologica.entity.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -11,6 +12,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -21,6 +24,8 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigFootLookAtPlayerGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootHideGoal;
 import net.smiech.cryptidologica.entity.goals.bigfootGoals.BigfootMeleeAttackGoal;
@@ -74,10 +79,11 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
                 .add(Attributes.FOLLOW_RANGE, 32f);
     }
 
+    //some weird pathfinding where it can walk through leaves if there's a 45 degree angle otherwise it doesn't go through the leaf?
     @Override
     protected PathNavigation createNavigation(Level pLevel) {
         if (this instanceof BigfootEntity){
-            return new BigfootCustomNavigation(this,this.level());
+            return new BigfootCustomNavigation(this, this.level());
         }else {
             return super.createNavigation(pLevel);
         }
@@ -169,18 +175,13 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     //It also appears to crash when it's not in leaves
     //so it has to do with the general path finder not even existing it seems, I guess can reach==false it crashes??
     //Checks if the next node in the path is a leaves block if it is then turn off gravity and physics to clip it into it then reset it every 2nd tick
+    //potetntially use delta movement to keep it on its original trajectory so it doesn't go upward
+    //two blocks of leaves currently leaves hims stuck in the ground, potentially increase leaf detection half or one block higher too?
+    //yeah because he gets stuck on leaves clipping his forehead because he seems them as traversable
+    //bigfoot can't meele you in a half block like fences?
+
     @Override
     public void tick() {
-        if (this.getTarget()!=null && this.getNavigation().getPath()!=null && this.level().getBlockState(this.getNavigation().getPath().getNextNodePos().above()).is(BlockTags.LEAVES)){
-            System.out.println("tick:"+this.getTick(this)+ " above:"+ this.getNavigation().getPath().getNextNodePos().above());
-            this.noPhysics = true;
-            this.setNoGravity(true);
-            System.out.println(this.noPhysics);
-        }
-        if (this.noPhysics==true && this.getTick(this)%2==0){
-            this.noPhysics = false;
-            this.setNoGravity(false);
-        }
         super.tick();
     }
 

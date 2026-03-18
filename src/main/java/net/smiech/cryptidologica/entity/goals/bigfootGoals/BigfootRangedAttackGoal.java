@@ -25,7 +25,7 @@ public class BigfootRangedAttackGoal extends RangedAttackGoal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.canUse() || this.entity.getTarget().isAlive() && !this.entity.getNavigation().isDone();
+        return this.canUse() || (entity.getTarget() !=null) && this.entity.getTarget().isAlive() && !this.entity.getNavigation().isDone();
     }
 
     @Override

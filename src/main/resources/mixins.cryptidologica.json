@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.smiech.cryptidologica.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "LeavesBlockMixin",
+    "BlockBehaviourMixin"
+  ],
+  "client": [
+
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "cryptidologica.refmap.json"
+}

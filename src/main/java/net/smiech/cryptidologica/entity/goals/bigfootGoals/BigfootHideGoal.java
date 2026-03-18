@@ -36,7 +36,6 @@ public class BigfootHideGoal extends Goal {
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
 
-
     public boolean isReachedTarget(){ return reachedTarget;}
 
     public void hasReachedTarget(boolean setReach){this.reachedTarget = setReach;}
@@ -136,8 +135,7 @@ public class BigfootHideGoal extends Goal {
                 vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.35);
 
     }
-    //When a recode happens probably make this its own goal
-    //Launch when block isn't found, keep checking if that's changed, since running starts only from 100 it can still find a block normally before that
+    //Add this next update
     protected void runToRandomSpot(){
         Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 15, 7);
         if(randomSpot != null && (timeToRun>=100 && timeToRun <200) && returnPlayer().distanceToSqr(randomSpot)>25) {
@@ -222,7 +220,6 @@ public class BigfootHideGoal extends Goal {
 
     public boolean canContinueToUse() {
         return !isReachedTarget() && detectPlayerInRange();
-//        sendChatMessage("Can't !ContinuetoUse");
 //Currently stops, But Doesn't relaunch unless the player exits the minimum range after it does a different goal?
     }
 
