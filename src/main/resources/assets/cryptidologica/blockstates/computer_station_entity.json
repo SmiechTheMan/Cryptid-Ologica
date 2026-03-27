@@ -1,8 +1,0 @@
-{
-  "variants" :{
-  "facing=north": {"model": "cryptidologica:models/block/computer_station"},
-    "facing=east": {"model": "cryptidologica:models/block/computer_station", "y": 90},
-    "facing=south": {"model": "cryptidologica:models/block/computer_station", "y": 180},
-    "facing=west": {"model": "cryptidologica:models/block/computer_station", "y": 270}
-  }
-}

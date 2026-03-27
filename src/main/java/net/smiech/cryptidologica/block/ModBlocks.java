@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CryptidOlogica.MOD_ID);
 
-    public static final RegistryObject<Block> COMPUTER_STATION = registerBlock("computer_station",
+    public static final RegistryObject<ComputerStationBlock> COMPUTER_STATION = registerBlock("computer_station",
             ()-> new ComputerStationBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).noOcclusion()));
 
 

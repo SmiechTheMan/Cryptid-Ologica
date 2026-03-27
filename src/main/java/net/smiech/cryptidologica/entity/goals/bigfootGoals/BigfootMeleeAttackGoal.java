@@ -6,7 +6,8 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
-
+    //todo:
+    // -Add slight random chance to melee and ranged attack so it isn't as predictable
     private final BigfootEntity entity;
 
     public BigfootMeleeAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen) {
@@ -19,7 +20,6 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
     public boolean canUse() {
         if((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),
                 1)!=null && this.entity.getNavigation().createPath(entity.getTarget(),1).canReach()){
-                    System.out.println("CanUse ReachVar Status:" + this.entity.getNavigation().createPath(entity.getTarget(),3).canReach());
                     return super.canUse();
         }
         return false;
@@ -29,7 +29,6 @@ public class BigfootMeleeAttackGoal extends MeleeAttackGoal {
     public boolean canContinueToUse() {
         if((entity.getTarget() !=null) && this.entity.getNavigation().createPath(entity.getTarget(),
                 1)!=null && this.entity.getNavigation().createPath(entity.getTarget(),1).canReach()) {
-            System.out.println("cCtU Reach Status: " + this.entity.getNavigation().createPath(entity.getTarget(),1).canReach());
             return super.canContinueToUse();
         }
         return false;

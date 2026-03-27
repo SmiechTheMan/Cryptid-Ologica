@@ -18,9 +18,14 @@ public class ModCreativeModTabs {
 public static final RegistryObject<CreativeModeTab> CRYPTIDOLOGICA_TAB = CREATIVE_MODE_TABS.register("cryptidologica_tab",
         ()-> CreativeModeTab.builder().icon(()->new ItemStack(ModItems.BIGFOOT_SPAWN_EGG.get()))
                 .title(Component.translatable("creativetab.cryptidologica_tab")).displayItems((pParameters, pOutput) -> {
-
-                    pOutput.accept(ModItems.BIGFOOT_SPAWN_EGG.get());
+                    //Items
+                    pOutput.accept(ModItems.BIGFOOT_FUR_ITEM.get());
+                    pOutput.accept(ModItems.BIGFOOT_GHILLIE.get());
+                    //Blocks
                     pOutput.accept(ModBlocks.COMPUTER_STATION.get());
+                    //Spawn eggs
+                    pOutput.accept(ModItems.BIGFOOT_SPAWN_EGG.get());
+
 
                 }).build());
 

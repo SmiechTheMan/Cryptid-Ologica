@@ -4,6 +4,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,6 +15,7 @@ import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.smiech.cryptidologica.entity.custom.BigfootEntity;
+import net.smiech.cryptidologica.item.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,11 +28,10 @@ abstract class LeavesBlockMixin extends BlockBehaviourMixin{
     protected VoxelShape overrideForLeavesBlock(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext, Operation<VoxelShape> original) {
         if (pContext instanceof EntityCollisionContext entityCollisionContext){
             Entity entity = entityCollisionContext.getEntity();
-            //if I jump it doesn't count as being above the pPos so that means I can't jump through it and ontop of another block
-            //(also kinda stumps you from fully jumping if too close?)
-            if (entity !=null && (entity instanceof Player || entity instanceof BigfootEntity)){
+            //Bigfoot will now traverse the leaves, Will think if he should keep doing that
+            if (entity !=null && ((entity instanceof Player && ((Player) entity).getInventory().getArmor(2).getItem().equals(ModItems.BIGFOOT_GHILLIE.get()))
+                    || entity instanceof BigfootEntity)){
                 if (entity.blockPosition().getY() <= pPos.getY()){
-                    System.out.println(pPos + " Entity:" + entity.blockPosition());
                     return Shapes.empty();
                 }
             }

@@ -1,5 +1,7 @@
 {
   "item.cryptidologica.bigfoot_spawn_egg" : "Bigfoot Spawn Egg",
+  "item.cryptidologica.bigfoot_fur_item" : "Bigfoot fur",
+
   "entity.minecraft.villager.cryptidologica.nutjob": "Nutjob",
 
   "block.cryptidologica.computer_station": "Computer Station",

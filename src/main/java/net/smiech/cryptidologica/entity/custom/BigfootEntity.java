@@ -59,11 +59,11 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.7D,true));
         this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 24, 7.0F));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
-        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(2, new BigFootLookAtPlayerGoal(this, Player.class, 25f,1f));
         this.goalSelector.addGoal(1, new BigfootHideGoal(this,20));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
+        this.goalSelector.addGoal(2, new BigFootLookAtPlayerGoal(this, Player.class, 25f,1f));
+        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5));
 
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
 
@@ -171,13 +171,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         return SoundEvents.DOLPHIN_DEATH;
     }
 
-    //currently crashes if touches player :), implement a throw to catch the value when it crashes maybe???
-    //It also appears to crash when it's not in leaves
-    //so it has to do with the general path finder not even existing it seems, I guess can reach==false it crashes??
-    //Checks if the next node in the path is a leaves block if it is then turn off gravity and physics to clip it into it then reset it every 2nd tick
-    //potetntially use delta movement to keep it on its original trajectory so it doesn't go upward
-    //two blocks of leaves currently leaves hims stuck in the ground, potentially increase leaf detection half or one block higher too?
-    //yeah because he gets stuck on leaves clipping his forehead because he seems them as traversable
+
     //bigfoot can't meele you in a half block like fences?
 
     @Override

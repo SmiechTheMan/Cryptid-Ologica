@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -32,7 +33,7 @@ public class ComputerStationBlock extends HorizontalDirectionalBlock implements 
 
     public ComputerStationBlock(Properties pProperties) {
         super(pProperties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -67,6 +68,7 @@ public class ComputerStationBlock extends HorizontalDirectionalBlock implements 
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return defaultBlockState().setValue(FACING,pContext.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
+
 }

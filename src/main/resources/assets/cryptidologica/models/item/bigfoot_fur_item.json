@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "cryptidologica:item/bigfoot_fur_item"
+  }
+}

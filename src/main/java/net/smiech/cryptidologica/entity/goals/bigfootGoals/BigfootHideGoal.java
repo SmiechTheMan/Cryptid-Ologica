@@ -2,26 +2,24 @@ package net.smiech.cryptidologica.entity.goals.bigfootGoals;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.CollisionGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 import java.util.EnumSet;
 
 
 public class BigfootHideGoal extends Goal {
-
-    private int tickingSpeed;
+//todo:
+// -make tick() check if block is found and bigfoot is near it's location if not move to it, if a block is found and a player is nearby flush it
+// and then the searching process can restart
+// -Change the leaf detection to make it more reliable and to allow for some leeway for placement (like blocks missing or have 1 trapdoor
+    private int playerDetectRange;
     protected final PathfinderMob mob;
     protected boolean reachedTarget = false;
     protected boolean blockFound = false;
@@ -30,8 +28,8 @@ public class BigfootHideGoal extends Goal {
     protected Vec3 vectorToHide;
     protected static int timeToRun = 0;
 
-    public BigfootHideGoal(PathfinderMob mob, int tickingSpeed) {
-        this.tickingSpeed = tickingSpeed;
+    public BigfootHideGoal(PathfinderMob mob, int pPlayerDetectRange) {
+        this.playerDetectRange = pPlayerDetectRange;
         this.mob = mob;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
@@ -51,10 +49,10 @@ public class BigfootHideGoal extends Goal {
 
     //looks for wanted block searching for it in a "growing patter, 1 to each side of the last searched block
     // then checks if the block is a tree, sets hasBlockFound to true and then returns true otherwise false
-    protected boolean findTreeRoot(PathfinderMob pMob){
+    protected boolean findTreeRoot(PathfinderMob pMob, int hDistance, int vDistance, int playerToBlockDistance){
        BlockPos mobPosition = pMob.blockPosition();
-       int blockVerticalSearch = 10;
-       int blockHorizontalSearch = 10;
+       int blockVerticalSearch = hDistance;
+       int blockHorizontalSearch = vDistance;
        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
 
         for(int $$1 = 0; $$1 <= blockVerticalSearch; $$1 = $$1 > 0 ? -$$1 : 1 - $$1) {
@@ -63,7 +61,7 @@ public class BigfootHideGoal extends Goal {
                     for(int $$4 = $$3 < $$2 && $$3 > -$$2 ? $$2 : 0; $$4 <= $$2; $$4 = $$4 > 0 ? -$$4 : 1 - $$4) {
                         mutableBlockPos.setWithOffset(mobPosition, $$3, $$1 - 1, $$4);
                         if (this.mob.isWithinRestriction(mutableBlockPos)
-                                && this.isTree(this.mob.level(), mutableBlockPos))
+                                && this.isTree(this.mob.level(), mutableBlockPos, playerToBlockDistance))
                         {
                             System.out.println("FindTreeRoot blockpos setter ");
                             hasBlockFound(true);
@@ -74,14 +72,14 @@ public class BigfootHideGoal extends Goal {
                 }
             }
         }
-
+        runToRandomSpot(playerDetectRange,playerToBlockDistance);
         return false;
     }
     //change the player detection, so bigfoot doesn't freeze if people are too close
     //scans for blocks around the found wanted block. Looking if there's empty space the entity could hide behind it
-    private boolean isTree(Level pLevel, BlockPos pPos) {
+    private boolean isTree(Level pLevel, BlockPos pPos, int playerToBlockDistance) {
             BlockState currentBlock = pLevel.getBlockState(pPos);
-            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer().distanceToSqr(pPos.getCenter()) > 12*12)){
+            if (currentBlock.is(BlockTags.LOGS) && (returnPlayer(playerToBlockDistance).distanceToSqr(pPos.getCenter()) > 12*12)){
                 BlockPos.MutableBlockPos rootBlockPos = new BlockPos.MutableBlockPos();
                 rootBlockPos.set(pPos);
                 int distanceForSearch = 5;
@@ -103,8 +101,7 @@ public class BigfootHideGoal extends Goal {
                                                 (pLevel.getBlockState(treeCheckerBlockPos).is(BlockTags.SWORD_EFFICIENT))
                                                 ||
                                                 (pLevel.getBlockState(treeCheckerBlockPos).is(BlockTags.LEAVES))
-                                                )
-                                        ) {
+                                                )) {
                                         return false;
                                     }else if (k==1 && j==1 && !(pLevel.getBlockState(treeCheckerBlockPos).is(BlockTags.LOGS))){
                                         return false;
@@ -112,7 +109,6 @@ public class BigfootHideGoal extends Goal {
                                 }
                             }
                         }
-
                         System.out.println("IsTree true");
                         this.blockPos = rootBlockPos.above();
                         return true;
@@ -121,28 +117,12 @@ public class BigfootHideGoal extends Goal {
             }
         return false;
     }
-    //increase speed incrementally
-    //Moves bigfoot behind a tree based on player position so he is (most of the time) hidding behind a tree
-    // then have him move there
-    protected void moveMobBehindTree(){
-        Vec3 blockCenter = this.blockPos.above().getCenter();
-        Vec3 directionBetween = returnPlayer().position().subtract(blockCenter).normalize();
 
-        this.vectorToHide= blockCenter.subtract(directionBetween.scale(1.2));
-        System.out.println(blockPos + " vector ; " + vectorToHide);
-        System.out.println("MoveBehindTree start");
-        this.mob.getNavigation().moveTo(
-                vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.35);
-
-    }
     //Add this next update
-    protected void runToRandomSpot(){
-        Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 15, 7);
-        if(randomSpot != null && (timeToRun>=100 && timeToRun <200) && returnPlayer().distanceToSqr(randomSpot)>25) {
-            this.mob.getNavigation().moveTo(randomSpot.x,randomSpot.y, randomSpot.z, 1.5);
-        }else if(timeToRun >= 200){
-        this.mob.discard();
-        timeToRun = 0;
+    protected void runToRandomSpot(int lookForPlayerRange, int playerToBlockDistance){
+        Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 20, 7);
+        if(randomSpot != null && returnPlayer(lookForPlayerRange).distanceToSqr(randomSpot)>playerToBlockDistance) {
+            this.mob.getNavigation().moveTo(randomSpot.x,randomSpot.y, randomSpot.z, 1.7);
         }
         //this will activate when there's no trees, bigfoot will run around trying to find something and then
         // if nothing is found after a bit will open an interdimensional portal and leave
@@ -166,7 +146,7 @@ public class BigfootHideGoal extends Goal {
                         if (k != 1 && j != 1
                                 && !((pPlayer.level().getBlockState(leafCheckerBlockPos).is(BlockTags.LEAVES))
                               && pPlayer.isCrouching())
-                               && (pPlayer.isCreative())
+                               && !(pPlayer.isCreative())
                         ) {
                             return false;
                         }
@@ -177,30 +157,37 @@ public class BigfootHideGoal extends Goal {
         }
         return false;
     }
+
     //detects if there is a player in specified range that isn't inside of the leaves
-    protected boolean detectPlayerInRange(){
-        if (returnPlayer().distanceToSqr(this.mob) < 18*18){
-           return !isPlayerInleaves(returnPlayer());
+    protected boolean detectPlayerInRange(int distToPlayer, int distFromMob){
+        if (returnPlayer(distToPlayer).distanceToSqr(this.mob) < distFromMob*distFromMob){
+           return !isPlayerInleaves(returnPlayer(distToPlayer));
         }
         return false;
     }
 
-    private Player returnPlayer() {
-        this.target = this.mob.level().getNearestPlayer(this.mob, 400);
+    //increase speed incrementally
+    //Moves bigfoot behind a tree based on player position so he is (most of the time) hidding behind a tree
+    // then have him move there
+    protected void moveMobBehindTree(){
+        Player targetPlayer = returnPlayer(playerDetectRange);
+        Vec3 blockCenter = this.blockPos.above().getCenter();
+        Vec3 directionBetween = targetPlayer.position().subtract(blockCenter).normalize();
+
+        this.vectorToHide= blockCenter.subtract(directionBetween.scale(1.2));
+        System.out.println(blockPos + " vector ; " + vectorToHide);
+        System.out.println("MoveBehindTree start");
+        this.mob.getNavigation().moveTo(
+                vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.5);
+        if (Math.random() > 0.3){
+            this.mob.getLookControl().setLookAt(targetPlayer.getX(), targetPlayer.getY()+2, targetPlayer.getZ());
+        }
+
+    }
+
+    private Player returnPlayer(int pDistance) {
+    this.target = this.mob.level().getNearestPlayer(this.mob, pDistance*pDistance);
         return this.target;
-    }
-
-    protected void sendChatMessage(String msng){
-        Player localTarget = returnPlayer();
-        localTarget.sendSystemMessage(Component.literal(msng));
-    }
-
-    private void resetTick(int change) {
-        tickingSpeed=change;
-    }
-
-    private void decreaseTickingSpeed(int minus) {
-        tickingSpeed = tickingSpeed-minus;
     }
 
     //Player has to be within a certain distance of the mob, done
@@ -208,9 +195,9 @@ public class BigfootHideGoal extends Goal {
     //the distance in canuse is also connected to Stop, so it doesn't stop until I'm out of the range
 
     public boolean canUse() {
-        if(returnPlayer() != null){
-            if(detectPlayerInRange() && !isBlockFound() ){
-                return this.findTreeRoot(this.mob);
+        if(returnPlayer(playerDetectRange) != null){
+            if(detectPlayerInRange(35,20) && !isBlockFound() ){
+                return this.findTreeRoot(this.mob,20,20,9);
             }
 
         }
@@ -219,25 +206,16 @@ public class BigfootHideGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
-        return !isReachedTarget() && detectPlayerInRange();
-//Currently stops, But Doesn't relaunch unless the player exits the minimum range after it does a different goal?
+        return canUse();
     }
 
-//    public boolean isInterruptable() {
-////        System.out.println("IsInterruptable");
-//        return true;
-//    }
 
     public void start() {
-//        sendChatMessage("Start");
         this.moveMobBehindTree();
-
-
     }
 
     public void stop() {
             timeToRun = 0;
-//        sendChatMessage("stop");
        hasReachedTarget(false);
        hasBlockFound(false);
     }
@@ -247,34 +225,5 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void tick() {
-
-
-        if(!isBlockFound()){++timeToRun;}
-        decreaseTickingSpeed(1);
-        if(tickingSpeed<1){resetTick(20);}
-
-
-        if(!reachedTarget && (tickingSpeed%4==0) && blockFound){
-          this.moveMobBehindTree();
-//          sendChatMessage("Tick Movebhindtree");
-        }
-        if(!reachedTarget && (tickingSpeed%5==0) && detectPlayerInRange()){
-            hasBlockFound(false);
-            this.findTreeRoot(this.mob);
-//            sendChatMessage("Too close!!");
-        }
-
-        //not sure if this is still needed but will keep it for now
-        if(this.mob.blockPosition().closerToCenterThan(vectorToHide,1)){
-//           sendChatMessage("Over block");
-            hasBlockFound(false);
-           hasReachedTarget(false);
-        }
-        if(tickingSpeed%10==0 && !isBlockFound() && !isReachedTarget() ){
-        System.out.println("BlockFound: " + isBlockFound() + ":: ReachedTarget: " + isReachedTarget() + " timetorun " + timeToRun);
-        }
-        if (this.mob.getLastDamageSource()!=null && this.mob.getLastDamageSource().getEntity() instanceof LivingEntity){
-            stop();
-        }
     }
 }
