@@ -17,7 +17,7 @@ public class ComputerStationMainScreen extends AbstractContainerScreen<ComputerS
         private static final Component IMAGE_BUTTON =
                 Component.translatable("gui." + CryptidOlogica.MOD_ID + ".image_button");
         private static final ResourceLocation CS_MAIN_MENU_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(CryptidOlogica.MOD_ID,"textures/gui/cs_main_menu.png");
+            ResourceLocation.fromNamespaceAndPath(CryptidOlogica.MOD_ID,"textures/gui/cs_main_menu_wip.png");
 
     private ComputerStationBlockEntity csbEntity;
     private int leftPos, rightPos;
@@ -32,6 +32,7 @@ public class ComputerStationMainScreen extends AbstractContainerScreen<ComputerS
 
     @Override
     protected void init() {
+        clearWidgets();
         super.init();
         this.imageHeight = 272;
         this.imageWidth = 496;
@@ -45,7 +46,7 @@ public class ComputerStationMainScreen extends AbstractContainerScreen<ComputerS
                 Button.builder(
                         IMAGE_BUTTON,
                         this::handleExampleButton)
-                        .bounds(this.leftPos + 30, this.rightPos + 50,65,20)
+                        .bounds(this.rightPos + imageWidth/8, this.topPos+imageHeight/8,65,80)
                         .build());
     }
 
@@ -63,6 +64,7 @@ public class ComputerStationMainScreen extends AbstractContainerScreen<ComputerS
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         renderTooltip(pGuiGraphics,pMouseX,pMouseY);
+        pGuiGraphics.drawString(this.font,"Website in progress",this.rightPos + imageWidth/2, this.topPos,0x404040, false);
 
     }
 }

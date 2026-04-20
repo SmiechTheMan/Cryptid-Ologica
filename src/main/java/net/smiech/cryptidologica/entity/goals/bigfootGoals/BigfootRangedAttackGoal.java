@@ -6,7 +6,9 @@ import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 public class BigfootRangedAttackGoal extends RangedAttackGoal {
 
+
     private final BigfootEntity entity;
+
 
     public BigfootRangedAttackGoal(RangedAttackMob pMob, double pSpeedModifier, int pAttackInterval, float pAttackRadius) {
         super(pMob, pSpeedModifier, pAttackInterval, pAttackRadius);
@@ -23,19 +25,25 @@ public class BigfootRangedAttackGoal extends RangedAttackGoal {
         return false;
     }
 
+
     @Override
     public boolean canContinueToUse() {
         return this.canUse() || (entity.getTarget() !=null) && this.entity.getTarget().isAlive() && !this.entity.getNavigation().isDone();
     }
 
     @Override
-    public void tick() { super.tick(); }
+    public void tick() {
+            super.tick();
+    }
 
     @Override
-    public void start() { super.start(); }
+    public void start() {
+        entity.setRangedAttacking(true);
+        super.start(); }
 
     @Override
     public void stop() {
+        entity.setRangedAttacking(false);
         super.stop();
     }
 

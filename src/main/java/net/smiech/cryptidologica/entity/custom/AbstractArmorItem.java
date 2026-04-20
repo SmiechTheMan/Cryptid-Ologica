@@ -65,6 +65,7 @@ public abstract class AbstractArmorItem extends ArmorItem {
         }
         return builder;
     }
+    protected boolean allPartsVisible() { return false; }
 
     //region display / model
 
@@ -85,7 +86,7 @@ public abstract class AbstractArmorItem extends ArmorItem {
             @Override
             public @NotNull ArmorModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
                 ArmorModel armorModel = provider.getModel(living, stack, slot);
-                armorModel.partVisible(slot);
+                if(!allPartsVisible()){armorModel.partVisible(slot);}
                 armorModel.crouching = original.crouching;
                 armorModel.riding = original.riding;
                 armorModel.young = original.young;

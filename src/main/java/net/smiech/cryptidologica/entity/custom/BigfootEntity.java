@@ -8,9 +8,11 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -20,9 +22,11 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -41,11 +45,11 @@ import software.bernie.geckolib.core.object.PlayState;
 
 public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAttackMob {
 
-    private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.
+    //TODO: Add a timer method to rangedAttack to make it less frequent
+
+    private static final EntityDataAccessor<Boolean> RANGEATTACKING = SynchedEntityData.
             defineId(BigfootEntity.class, EntityDataSerializers.BOOLEAN);
     private static final  EntityDataAccessor<Boolean> FLEEING = SynchedEntityData.
-            defineId(BigfootEntity.class,EntityDataSerializers.BOOLEAN);
-    private static final  EntityDataAccessor<Boolean> CANREACHTARGET = SynchedEntityData.
             defineId(BigfootEntity.class,EntityDataSerializers.BOOLEAN);
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
@@ -58,7 +62,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.7D,true));
-        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1.25F, 24, 7.0F));
+        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1F, 36, 7.0F));
         this.goalSelector.addGoal(1, new BigfootHideGoal(this,20));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
         this.goalSelector.addGoal(2, new BigFootLookAtPlayerGoal(this, Player.class, 25f,1f));
@@ -89,6 +93,12 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         }
     }
 
+    public static boolean canSpawn(EntityType<BigfootEntity> entityType, ServerLevelAccessor level,
+                                   MobSpawnType spawnType, BlockPos position, RandomSource random)
+    {
+      return checkMobSpawnRules(entityType,level,spawnType,position,random);
+    }
+
 //ENTITY DATA
 
     public void setFleeing(boolean fleeing){
@@ -99,28 +109,20 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
         return this.entityData.get(FLEEING);
     }
 
-    public void setAttacking(boolean attacking){
-        this.entityData.set(ATTACKING, attacking);
+    public void setRangedAttacking(boolean attacking){
+        this.entityData.set(RANGEATTACKING, attacking);
     }
 
-    public boolean isAttacking(){
-        return this.entityData.get(ATTACKING);
+    public boolean isRangedAttacking(){
+        return this.entityData.get(RANGEATTACKING);
     }
 
-    public void setCanReachTarget(boolean canReachTarget){
-        this.entityData.set(CANREACHTARGET, canReachTarget);
-    }
-
-    public boolean isCanReachTarget(){
-        return this.entityData.get(CANREACHTARGET);
-    }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(ATTACKING,false);
+        this.entityData.define(RANGEATTACKING,false);
         this.entityData.define(FLEEING,false);
-        this.entityData.define(CANREACHTARGET, false);
     }
 
     //ANIMATIONS AND SFX
@@ -135,6 +137,10 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
             geoAnimatableAnimationState.resetCurrentAnimation();
             geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.melee",Animation.LoopType.PLAY_ONCE));
             this.swinging = false;
+        }
+        if (this.isRangedAttacking() && geoAnimatableAnimationState.getController().getAnimationState().equals(AnimationController.State.STOPPED)){
+            geoAnimatableAnimationState.resetCurrentAnimation();
+            geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.ranged",Animation.LoopType.PLAY_ONCE));
 
         }
 
@@ -142,8 +148,12 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     }
 
     private PlayState predicate(AnimationState<GeoAnimatable> geoAnimatableAnimationState) {
-        if(geoAnimatableAnimationState.isMoving()){
+        if(geoAnimatableAnimationState.isMoving() && !this.isFleeing()){
             geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.walk", Animation.LoopType.LOOP));
+            return PlayState.CONTINUE;
+        }
+        if(geoAnimatableAnimationState.isMoving() && this.isFleeing()){
+            geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.run", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
         }
         geoAnimatableAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.bigfoot.idle", Animation.LoopType.LOOP));
@@ -170,9 +180,6 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     protected @Nullable SoundEvent getDeathSound() {
         return SoundEvents.DOLPHIN_DEATH;
     }
-
-
-    //bigfoot can't meele you in a half block like fences?
 
     @Override
     public void tick() {

@@ -11,9 +11,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.smiech.cryptidologica.CryptidOlogica;
+import net.smiech.cryptidologica.entity.ModEntities;
+import net.smiech.cryptidologica.entity.client.BigfootClient.BigFootModel;
 import net.smiech.cryptidologica.entity.client.customProjectiles.RockProjectileModel;
 import net.smiech.cryptidologica.entity.client.tinfoilhat.TinFoilHatLayer;
 import net.smiech.cryptidologica.entity.client.tinfoilhat.TinFoilHatModel;
+import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 import net.smiech.cryptidologica.gui.ComputerStationMainScreen;
 import net.smiech.cryptidologica.gui.ModMenus;
 

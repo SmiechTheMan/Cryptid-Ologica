@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.smiech.cryptidologica.entity.custom.BigfootEntity;
 
 import java.util.EnumSet;
 
@@ -19,7 +20,7 @@ public class BigfootHideGoal extends Goal {
 // -make tick() check if block is found and bigfoot is near it's location if not move to it, if a block is found and a player is nearby flush it
 // and then the searching process can restart
 // -Change the leaf detection to make it more reliable and to allow for some leeway for placement (like blocks missing or have 1 trapdoor
-    private int playerDetectRange;
+    private final int playerDetectRange;
     protected final PathfinderMob mob;
     protected boolean reachedTarget = false;
     protected boolean blockFound = false;
@@ -34,7 +35,6 @@ public class BigfootHideGoal extends Goal {
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
 
-    public boolean isReachedTarget(){ return reachedTarget;}
 
     public void hasReachedTarget(boolean setReach){this.reachedTarget = setReach;}
 
@@ -66,13 +66,14 @@ public class BigfootHideGoal extends Goal {
                             System.out.println("FindTreeRoot blockpos setter ");
                             hasBlockFound(true);
                             timeToRun = 0;
+                            ((BigfootEntity) pMob).setFleeing(false);
                             return true;
                         }
                     }
                 }
             }
         }
-        runToRandomSpot(playerDetectRange,playerToBlockDistance);
+        runToRandomSpot(5,5);
         return false;
     }
     //change the player detection, so bigfoot doesn't freeze if people are too close
@@ -119,9 +120,9 @@ public class BigfootHideGoal extends Goal {
     }
 
     //Add this next update
-    protected void runToRandomSpot(int lookForPlayerRange, int playerToBlockDistance){
+    protected void runToRandomSpot(int lookForPlayerRange, int playerToRandomSpot){
         Vec3 randomSpot = DefaultRandomPos.getPos(this.mob, 20, 7);
-        if(randomSpot != null && returnPlayer(lookForPlayerRange).distanceToSqr(randomSpot)>playerToBlockDistance) {
+        if(randomSpot != null && returnPlayer(lookForPlayerRange).distanceToSqr(randomSpot)>playerToRandomSpot) {
             this.mob.getNavigation().moveTo(randomSpot.x,randomSpot.y, randomSpot.z, 1.7);
         }
         //this will activate when there's no trees, bigfoot will run around trying to find something and then
@@ -179,7 +180,7 @@ public class BigfootHideGoal extends Goal {
         System.out.println("MoveBehindTree start");
         this.mob.getNavigation().moveTo(
                 vectorToHide.x, vectorToHide.y, vectorToHide.z, 1.5);
-        if (Math.random() > 0.3){
+        if (Math.random() > 0.7){
             this.mob.getLookControl().setLookAt(targetPlayer.getX(), targetPlayer.getY()+2, targetPlayer.getZ());
         }
 
@@ -197,7 +198,7 @@ public class BigfootHideGoal extends Goal {
     public boolean canUse() {
         if(returnPlayer(playerDetectRange) != null){
             if(detectPlayerInRange(35,20) && !isBlockFound() ){
-                return this.findTreeRoot(this.mob,20,20,9);
+                return this.findTreeRoot(this.mob,20,20,5);
             }
 
         }
@@ -225,5 +226,12 @@ public class BigfootHideGoal extends Goal {
     }
 
     public void tick() {
+    if (detectPlayerInRange(10,10) && this.mob instanceof BigfootEntity){
+        if (this.mob.getTarget()==null){
+            this.mob.setSpeed(1.75F);
+            ((BigfootEntity) this.mob).setFleeing(true);
+            System.out.println("XD");
+            }
+        }
     }
 }

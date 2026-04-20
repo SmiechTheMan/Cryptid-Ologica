@@ -4,6 +4,8 @@
 		"animation.bigfoot.walk": {
 			"loop": true,
 			"animation_length": 2,
+			"start_delay": 0,
+			"loop_delay": 2,
 			"bones": {
 				"Arm_Right": {
 					"rotation": {
@@ -193,7 +195,7 @@
 						},
 						"0.5": {
 							"post": {
-								"vector": [0, -0.5, 0]
+								"vector": [0, -0.2, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -205,7 +207,7 @@
 						},
 						"1.5": {
 							"post": {
-								"vector": [0, -0.5, 0]
+								"vector": [0, -0.2, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -221,7 +223,7 @@
 					"rotation": {
 						"0.0": {
 							"post": {
-								"vector": [-1, 0, 0]
+								"vector": [-1, 0, 1]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -233,7 +235,7 @@
 						},
 						"1.0": {
 							"post": {
-								"vector": [-0.9375, 0, 0]
+								"vector": [-1, 0, -1]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -245,7 +247,7 @@
 						},
 						"2.0": {
 							"post": {
-								"vector": [-1, 0, 0]
+								"vector": [-1, 0, 1]
 							},
 							"lerp_mode": "catmullrom"
 						}
@@ -259,7 +261,7 @@
 						},
 						"0.5": {
 							"post": {
-								"vector": [0, -0.2, 0]
+								"vector": [0, -0.1, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -271,7 +273,7 @@
 						},
 						"1.5": {
 							"post": {
-								"vector": [0, -0.2, 0]
+								"vector": [0, -0.1, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -285,33 +287,222 @@
 				}
 			}
 		},
-		"animation.bigfoot.run": {
+		"animation.bigfoot.idle": {
 			"loop": true,
-			"animation_length": 1,
+			"animation_length": 2,
+			"start_delay": 0,
+			"loop_delay": 1,
 			"bones": {
 				"Arm_Right": {
 					"rotation": {
 						"0.0": {
-							"vector": [15, 0, 0]
+							"vector": [0, 0, 0]
 						},
 						"0.5": {
-							"vector": [-10, 0, 0]
+							"vector": [-2.5, 0, 0]
 						},
 						"1.0": {
-							"vector": [15, 0, 0]
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [2.5, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
 						}
 					}
 				},
 				"Arm_Left": {
 					"rotation": {
 						"0.0": {
-							"vector": [-10, 0, 0]
+							"vector": [0, 0, 0]
 						},
 						"0.5": {
-							"vector": [10, 0, 0]
+							"vector": [-2.5, 0, 0]
 						},
 						"1.0": {
-							"vector": [-10, 0, 0]
+							"vector": [0, 0, 0]
+						},
+						"1.5": {
+							"vector": [2.5, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Body": {
+					"position": {
+						"0.0": {
+							"post": {
+								"vector": [0, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"1.0": {
+							"post": {
+								"vector": [0, -0.1, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"2.0": {
+							"post": {
+								"vector": [0, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						}
+					}
+				}
+			}
+		},
+		"animation.bigfoot.melee": {
+			"loop": true,
+			"animation_length": 0.75,
+			"bones": {
+				"Body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 11, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Arm_Right": {
+					"rotation": {
+						"0.0": {
+							"post": {
+								"vector": [0, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"0.5": {
+							"post": {
+								"vector": [-99.03557, -3.22746, -6.44823]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"0.5833": {
+							"post": {
+								"vector": [-72.99428, -11.96483, -7.6901]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					},
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				},
+				"Arm_Left": {
+					"rotation": {
+						"0.0": {
+							"post": {
+								"vector": [0, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"0.75": {
+							"post": {
+								"vector": [0, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"Finger_R": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.4583": {
+							"vector": [50, 0, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.4583": {
+							"vector": [0, -0.4, -0.8]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.4583": {
+							"vector": [0.975, 1, 1]
+						},
+						"0.75": {
+							"vector": [1, 1, 1]
+						}
+					}
+				}
+			}
+		},
+		"animation.bigfoot.run": {
+			"loop": true,
+			"animation_length": 1,
+			"start_delay": 0,
+			"loop_delay": 2,
+			"bones": {
+				"Arm_Right": {
+					"rotation": {
+						"0.0": {
+							"post": {
+								"vector": [15, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"0.5": {
+							"post": {
+								"vector": [-10, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"1.0": {
+							"post": {
+								"vector": [15, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						}
+					}
+				},
+				"Arm_Left": {
+					"rotation": {
+						"0.0": {
+							"post": {
+								"vector": [-10, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"0.5": {
+							"post": {
+								"vector": [10, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
+						},
+						"1.0": {
+							"post": {
+								"vector": [-10, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
 						}
 					}
 				},
@@ -504,19 +695,34 @@
 				"head": {
 					"rotation": {
 						"0.0": {
-							"vector": [-5, 0, 0]
+							"post": {
+								"vector": [-5, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
 						},
 						"0.25": {
-							"vector": [-2.5, 0, 0]
+							"post": {
+								"vector": [-2.5, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
 						},
 						"0.5": {
-							"vector": [-5, 0, 0]
+							"post": {
+								"vector": [-5, 0, 0]
+							},
+							"lerp_mode": "catmullrom"
 						},
 						"0.75": {
-							"vector": [-2.5001, 0.02177, -0.00143]
+							"post": {
+								"vector": [-2.5001, 0.02177, -0.00143]
+							},
+							"lerp_mode": "catmullrom"
 						},
 						"1.0": {
-							"vector": [-5.0001, 0.02168, -0.00237]
+							"post": {
+								"vector": [-5.0001, 0.02168, -0.00237]
+							},
+							"lerp_mode": "catmullrom"
 						}
 					},
 					"position": {
@@ -554,23 +760,71 @@
 				}
 			}
 		},
-		"animation.bigfoot.idle": {
-			"loop": true,
+		"animation.bigfoot.ranged": {
 			"animation_length": 2,
 			"bones": {
+				"Bigfoot": {
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -5, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [32.5, 0, 0]
+						},
+						"1.25": {
+							"vector": [3.75, 0, 0]
+						},
+						"1.5417": {
+							"vector": [25.4167, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
 				"Arm_Right": {
 					"rotation": {
 						"0.0": {
 							"vector": [0, 0, 0]
 						},
 						"0.5": {
-							"vector": [-2.5, 0, 0]
+							"vector": [-50.1046, 28.2884, -29.5483]
 						},
 						"1.0": {
+							"vector": [-211.33, -35.6308, 19.5255]
+						},
+						"1.25": {
+							"vector": [-221.7976, -11.1555, 7.2444]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
 							"vector": [0, 0, 0]
 						},
-						"1.5": {
-							"vector": [2.5, 0, 0]
+						"0.5": {
+							"vector": [-1, -1.47455, -3.35118]
+						},
+						"1.0": {
+							"vector": [-1.28558, 0.82319, 1.29215]
+						},
+						"1.25": {
+							"vector": [0.69001, 0.6949, 1.54823]
 						},
 						"2.0": {
 							"vector": [0, 0, 0]
@@ -583,147 +837,129 @@
 							"vector": [0, 0, 0]
 						},
 						"0.5": {
-							"vector": [-2.5, 0, 0]
+							"vector": [-50.1046, -28.2884, 29.5483]
 						},
 						"1.0": {
-							"vector": [0, 0, 0]
+							"vector": [-211.33, 35.6308, -19.5255]
 						},
-						"1.5": {
-							"vector": [2.5, 0, 0]
-						},
-						"2.0": {
-							"vector": [0, 0, 0]
-						}
-					}
-				},
-				"Body": {
-					"position": {
-						"0.0": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						},
-						"1.0": {
-							"post": {
-								"vector": [0, -0.1, 0]
-							},
-							"lerp_mode": "catmullrom"
+						"1.25": {
+							"vector": [-221.7976, 11.1555, -7.2444]
 						},
 						"2.0": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						}
-					}
-				}
-			}
-		},
-		"animation.bigfoot.melee": {
-			"loop": true,
-			"animation_length": 0.75,
-			"bones": {
-				"Body": {
-					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
-						"0.5": {
-							"vector": [0, 11, 0]
-						},
-						"0.75": {
-							"vector": [0, 0, 0]
-						}
-					}
-				},
-				"Arm_Right": {
-					"rotation": {
-						"0.0": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						},
-						"0.5": {
-							"post": {
-								"vector": [-99.03557, -3.22746, -6.44823]
-							},
-							"lerp_mode": "catmullrom"
-						},
-						"0.5833": {
-							"post": {
-								"vector": [-72.99428, -11.96483, -7.6901]
-							},
-							"lerp_mode": "catmullrom"
-						},
-						"0.75": {
 							"vector": [0, 0, 0]
 						}
 					},
 					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [1, -1.47455, -3.35118]
+						},
+						"1.0": {
+							"vector": [1.28558, 0.82319, 1.29215]
+						},
+						"1.25": {
+							"vector": [-0.69001, 0.6949, 1.54823]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [22.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [-22.5, 0, 0]
+						},
+						"1.25": {
+							"vector": [-6.875, 0, 0]
+						},
+						"1.5417": {
+							"vector": [-17.3472, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Leg_Left": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [42.5, 0, 0]
+						},
+						"1.0": {
+							"vector": [45.8333, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 1, -2]
+						},
+						"1.0": {
+							"vector": [0, 2.08406, -1.35057]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Toe_L": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [-18.08, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, -1.51, -0.12]
+						},
+						"2.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Leg_Right": {
+					"rotation": {
 						"vector": [0, 0, 0]
 					},
-					"scale": {
-						"vector": [1, 1, 1]
-					}
-				},
-				"Arm_Left": {
-					"rotation": {
-						"0.0": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						},
-						"0.75": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						}
-					}
-				},
-				"Finger_R": {
-					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
-						"0.4583": {
-							"vector": [50, 0, 0]
-						},
-						"0.75": {
-							"vector": [0, 0, 0]
-						}
-					},
 					"position": {
 						"0.0": {
 							"vector": [0, 0, 0]
 						},
-						"0.4583": {
-							"vector": [0, -0.4, -0.8]
+						"0.5": {
+							"vector": [0, 4, -3]
 						},
-						"0.75": {
+						"2.0": {
 							"vector": [0, 0, 0]
-						}
-					},
-					"scale": {
-						"0.0": {
-							"vector": [1, 1, 1]
-						},
-						"0.4583": {
-							"vector": [0.975, 1, 1]
-						},
-						"0.75": {
-							"vector": [1, 1, 1]
 						}
 					}
 				}
 			}
-		},
-		"animation.bigfoot.idleLook-copy idle once done and add the look around": {
-			"loop": true
 		}
-	},
-	"geckolib_format_version": 2
+	}
 }

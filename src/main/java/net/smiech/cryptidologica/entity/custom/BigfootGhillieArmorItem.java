@@ -10,6 +10,7 @@ import net.smiech.cryptidologica.CryptidOlogica;
 import net.smiech.cryptidologica.entity.client.armor.model.ArmorModelProvider;
 import net.smiech.cryptidologica.entity.client.armor.model.BigfootGhillieModel;
 import net.smiech.cryptidologica.entity.client.armor.model.SimpleModelProvider;
+import net.smiech.cryptidologica.item.ModArmorMaterials;
 import org.jetbrains.annotations.Nullable;
 
 public class BigfootGhillieArmorItem extends AbstractArmorItem{
@@ -17,7 +18,12 @@ public class BigfootGhillieArmorItem extends AbstractArmorItem{
     private static final String TEXTURE_LOCATION = makeCustomTextureLocation(CryptidOlogica.MOD_ID,"bigfoot_ghillie_texture");
 
     public BigfootGhillieArmorItem( Type pType) {
-        super(ArmorMaterials.LEATHER, pType, new Properties().rarity(Rarity.RARE));
+        super(ModArmorMaterials.BIGFOOT_FUR, pType, new Properties().rarity(Rarity.UNCOMMON));
+    }
+
+    @Override
+    protected boolean allPartsVisible() {
+        return true;
     }
 
     @Override

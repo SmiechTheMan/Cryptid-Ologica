@@ -29,10 +29,15 @@ abstract class LeavesBlockMixin extends BlockBehaviourMixin{
         if (pContext instanceof EntityCollisionContext entityCollisionContext){
             Entity entity = entityCollisionContext.getEntity();
             //Bigfoot will now traverse the leaves, Will think if he should keep doing that
-            if (entity !=null && ((entity instanceof Player && ((Player) entity).getInventory().getArmor(2).getItem().equals(ModItems.BIGFOOT_GHILLIE.get()))
-                    || entity instanceof BigfootEntity)){
-                if (entity.blockPosition().getY() <= pPos.getY()){
-                    return Shapes.empty();
+            if(entity !=null){
+                if (entity instanceof BigfootEntity){
+                    if (entity.blockPosition().getY() <= pPos.getY()){
+                        return Shapes.empty();
+                    }
+                }
+                if (entity instanceof Player && ((Player) entity).getInventory().getArmor(2).getItem().equals(ModItems.BIGFOOT_GHILLIE.get())){
+                    if (entity.blockPosition().getY() <= pPos.getY() ){ return Shapes.empty(); }
+                    if (entity.isCrouching()){ return Shapes.empty(); }
                 }
             }
         }
