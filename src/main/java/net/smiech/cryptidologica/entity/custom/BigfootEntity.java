@@ -62,7 +62,7 @@ public class BigfootEntity extends PathfinderMob implements GeoEntity, RangedAtt
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BigfootMeleeAttackGoal(this, 1.7D,true));
-        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1F, 36, 7.0F));
+        this.goalSelector.addGoal(1, new BigfootRangedAttackGoal(this,1F, 30, 7.0F));
         this.goalSelector.addGoal(1, new BigfootHideGoal(this,20));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this,1.1D));
         this.goalSelector.addGoal(2, new BigFootLookAtPlayerGoal(this, Player.class, 25f,1f));
